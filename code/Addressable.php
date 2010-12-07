@@ -138,6 +138,21 @@ class Addressable extends DataObjectDecorator {
 	}
 
 	/**
+	 * Returns a static google map of the address, linking out to the address.
+	 *
+	 * @param  int $width
+	 * @param  int $height
+	 * @return string
+	 */
+	public function AddressMap($width, $height) {
+		$data = $this->owner->customise(array(
+			'Width'  => $width,
+			'Height' => $height
+		));
+		return $data->renderWith('AddressMap');
+	}
+
+	/**
 	 * Returns the country name (not the 2 character code).
 	 *
 	 * @return string
