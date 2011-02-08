@@ -54,7 +54,13 @@ class Addressable extends DataObjectDecorator {
 	}
 
 	public function updateCMSFields($fields) {
-		$fields->addFieldsToTab('Root.Content.Address', $this->getAddressFields());
+		if ($fields->fieldByName('Root.Content')) {
+			$tab = 'Root.Content.Address';
+		} else {
+			$tab = 'Root.Address';
+		}
+
+		$fields->addFieldsToTab($tab, $this->getAddressFields());
 	}
 
 	public function updateFrontEndFields($fields) {
