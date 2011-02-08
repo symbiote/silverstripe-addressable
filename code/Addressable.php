@@ -152,8 +152,9 @@ class Addressable extends DataObjectDecorator {
 	 */
 	public function AddressMap($width, $height) {
 		$data = $this->owner->customise(array(
-			'Width'  => $width,
-			'Height' => $height
+			'Width'    => $width,
+			'Height'   => $height,
+			'Address' => rawurlencode($this->getFullAddress())
 		));
 		return $data->renderWith('AddressMap');
 	}
