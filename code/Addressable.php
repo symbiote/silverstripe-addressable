@@ -48,7 +48,7 @@ class Addressable extends DataObjectDecorator {
 			'Address'  => 'Varchar(255)',
 			'Suburb'   => 'varchar(64)',
 			'State'    => 'Varchar(64)',
-			'Postcode' => 'Int',
+			'Postcode' => 'Varchar(20)',
 			'Country'  => 'Varchar(2)'
 		));
 	}
@@ -80,7 +80,7 @@ class Addressable extends DataObjectDecorator {
 	/**
 	 * @return array
 	 */
-	protected function getAddressFields() {
+	public function getAddressFields() {
 		$fields = array(
 			new HeaderField('AddressHeader', _t('Addressable.ADDRESSHEADER', 'Address')),
 			new TextField('Address', _t('Addressable.ADDRESS', 'Address')),
@@ -93,7 +93,7 @@ class Addressable extends DataObjectDecorator {
 			$fields[] = new TextField('State', $label);
 		}
 
-		$fields[] = new NumericField(
+		$fields[] = new TextField(
 			'Postcode', _t('Addressable.POSTCODE', 'Postcode')
 		);
 
