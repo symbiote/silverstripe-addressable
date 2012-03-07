@@ -5,16 +5,17 @@
  * This extensions also integrates with the {@link Geocoding} extension to
  * save co-ordinates on object write.
  *
- * @todo    Support non-numerical postcodes.
  * @package silverstripe-addressable
  */
 class Addressable extends DataObjectDecorator {
 
 	protected static $allowed_states;
 	protected static $allowed_countries;
+	protected static $postcode_regex= '/^[0-9]+$/';
 
 	protected $allowedStates;
 	protected $allowedCountries;
+	protected $postcodeRegex;
 
 	/**
 	 * Sets the default allowed states for new instances.
@@ -36,9 +37,19 @@ class Addressable extends DataObjectDecorator {
 		self::$allowed_countries = $countries;
 	}
 
+	/**
+	 * Sets the default postcode regex for new instances.
+	 *
+	 * @param string $regex
+	 */
+	public static function set_postcode_regex($regex) {
+		self::$postcode_regex = $regex;
+	}
+
 	public function __construct() {
 		$this->allowedStates    = self::$allowed_states;
 		$this->allowedCountries = self::$allowed_countries;
+		$this->postcodeRegex    = self::$postcode_regex;
 
 		parent::__construct();
 	}
@@ -48,7 +59,7 @@ class Addressable extends DataObjectDecorator {
 			'Address'  => 'Varchar(255)',
 			'Suburb'   => 'varchar(64)',
 			'State'    => 'Varchar(64)',
-			'Postcode' => 'Int',
+			'Postcode' => 'Varchar(10)',
 			'Country'  => 'Varchar(2)'
 		));
 	}
@@ -93,9 +104,9 @@ class Addressable extends DataObjectDecorator {
 			$fields[] = new TextField('State', $label);
 		}
 
-		$fields[] = new NumericField(
-			'Postcode', _t('Addressable.POSTCODE', 'Postcode')
-		);
+		$postcode = new RegexTextField('Postcode', _t('Addressable.POSTCODE', 'Postcode'));
+		$postcode->setRegex($this->postcodeRegex);
+		$fields[] = $postcode;
 
 		$label = _t('Addressable.COUNTRY', 'Country');
 		if (is_array($this->allowedCountries)) {
@@ -211,6 +222,18 @@ class Addressable extends DataObjectDecorator {
 	 */
 	public function setAllowedCountries($countries) {
 		$this->allowedCountries = $countries;
+	}
+
+	/**
+	 * Sets a regex that an entered postcode must match to be accepted. This can
+	 * be set to NULL to disable postcode validation and allow any value.
+	 *
+	 * The postcode regex defaults to only accepting numerical postcodes.
+	 *
+	 * @param string $regex
+	 */
+	public function setPostcodeRegex($regex) {
+		$this->postcodeRegex = $regex;
 	}
 
 }
