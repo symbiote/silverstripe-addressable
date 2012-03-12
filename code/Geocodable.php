@@ -9,8 +9,8 @@ class Geocodable extends DataObjectDecorator {
 
 	public function extraStatics() {
 		return array('db' => array(
-			'Lat' => 'Float',
-			'Lng' => 'Float'
+			'Lat' => 'DOUBLE',
+			'Lng' => 'DOUBLE'
 		));
 	}
 
