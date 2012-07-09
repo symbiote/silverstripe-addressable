@@ -111,7 +111,7 @@ class Addressable extends DataObjectDecorator {
 			$tab = 'Root.Address';
 		}
 		$fields->addFieldsToTab($tab, $this->getAddressFields());
-		$f->fieldByName($tab)->setTitle(_t('Addressable.TABTITLE', 'Address Map'));
+		$fields->fieldByName($tab)->setTitle(_t('Addressable.TABTITLE', 'Address Map'));
 	}
 
 	public function updateFrontEndFields($fields) {
