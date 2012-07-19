@@ -12,11 +12,20 @@ Requirements
 ------------
 *  SilverStripe 2.4+
 
+Installation
+------------
+
+Extract the contents of the zip-file, rename the folder to `addressable`
+and copy it to your website root.
+Add the object extensions to your `mysite/_config.php` as needed 
+(see Quick Usage Overview below).
+Then run a `mysite.com/dev/build?flush=1` to rebuild the database.
+
 Documentation
 -------------
 
-Quick Usage Overview
---------------------
+Quick Usage Overview: Adressable Extension
+-----------------------------------------
 
 In order to add simple address fields (address, suburb, city, postcode and
 country) to an object, simply apply to `Addressable` extension:
@@ -43,3 +52,29 @@ changed, simple apply the `Geocodable` extension:
 
 This will then use the Google Maps API to translate the address into a latitude
 and longitude on save, and save it into the `Lat` and `Lng` fields.
+
+Quick Usage Overview: GoogleMapsAdressable Extension
+---------------------------------------------------
+
+GoogleMapsAddressable adds the ability to render a dynamic Google Maps map
+with a single marker for the given address on an object.
+You can setup the UI of the Google map in the CMS 
+(width, height, map type, controls, etc.)
+
+It extends the `Addressable` extension, so you can as well use all the
+functionality described above.
+
+Simply apply the `GoogleMapsAddressable` and `Geocodable` extension to your Object, by adding
+the following line to your `mysite/_config.php`:
+
+    Object::add_extension('Object', 'GoogleMapsAddressable');
+    Object::add_extension('Object', 'Geocodable');
+
+Then run a `mysite.com/dev/build?flush=1` to rebuild the database.
+
+Now you can add the Google map by adding `$GoogleMapsAddressMap` to your template.
+`GoogleMapsAddressable` uses the `GoogleMapsAddressMap.ss` template. 
+This template is a starting point with all variables and functions available.
+You can customize the code, by creating your own template in your themes folder:
+`themes/MYTHEME/templates/GoogleMapsAddressMap.ss`
+

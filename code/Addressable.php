@@ -1,31 +1,7 @@
 <?php
 /**
- * Adds address fields to an object, as well as fields to manage them.
- * 
- * 
- * ---
- * 
- * This Extension can be added to SiteTree (e.g. SiteTree, Page or any custom Page)
- * adding the follwoing line to mysite/_config.php:
- * 
- * Object::add_extension('MyDataObject', 'Addressable');
- * 
- * ---
- * 
- * You can use the following variables in your templates:
- * 
- * $Address
- * -> Renders the Address in HTML (using Address.ss template)
- * 
- * $AddressMap(width,height)
- * -> Renders a static Google Map (using AddressMap.ss template)
- * 
- * $DynamicAddressMap(width,height)
- * -> Renders a dynamic JavaScript Google Map, with controls as set up on the page
- * (using template DynamicAddressMap)
- * 
- * ---
- * 
+ * Adds simple address fields to an object, as well as fields to manage them.
+ *
  * This extensions also integrates with the {@link Geocoding} extension to
  * save co-ordinates on object write.
  *
@@ -81,26 +57,10 @@ class Addressable extends DataObjectDecorator {
 	public function extraStatics() {
 		return array('db' => array(
 			'Address'  => 'Varchar(255)',
-			'Suburb'   => 'Varchar(64)',
+			'Suburb'   => 'varchar(64)',
 			'State'    => 'Varchar(64)',
 			'Postcode' => 'Varchar(10)',
-			'Country'  => 'Varchar(2)',
-			'CompanyName' => 'Varchar',
-			'Telephone' => 'Varchar',
-			'Fax' => 'Varchar',
-			'Email' => 'Varchar',
-			'MapWidth' => 'Int',
-			'MapHeight' => 'Int',
-			'MapZoom' => 'Int',
-			'MapPanControl' => 'Boolean',
-			'MapZoomControl' => 'Boolean',
-			'MapZoomStyle' => "Enum('SMALL, LARGE, DEFAULT', 'DEFAULT')",
-			'MapTypeControl' => 'Boolean',
-			'MapTypeStyle' => "Enum('HORIZONTAL_BAR, DROPDOWN_MENU, DEFAULT', 'DEFAULT')",
-			'MapTypeId' => "Enum('HYBRID, ROADMAP, SATELLITE, TERRAIN', 'HYBRID')",
-			'MapScaleControl' => 'Boolean',
-			'MapStreetViewControl' => 'Boolean',
-			'MapOverviewMapControl' => 'Boolean'
+			'Country'  => 'Varchar(2)'
 		));
 	}
 
@@ -126,20 +86,6 @@ class Addressable extends DataObjectDecorator {
 		if (is_string($this->allowedCountries)) {
 			$this->owner->Country = $this->allowedCountries;
 		}
-		
-		$this->owner->MapWidth = 480;
-		$this->owner->MapHeight = 320;
-		
-		$this->owner->MapZoom = 13;
-		$this->owner->MapPanControl = 0;
-		$this->owner->MapZoomControl = 1;
-		$this->owner->MapZoomStyle = 'DEFAULT';
-		$this->owner->MapTypeControl = 1;
-		$this->owner->MapTypeStyle = 'DEFAULT';
-		$this->owner->MapTypeId = 'HYBRID';
-		$this->owner->MapScaleControl = 0;
-		$this->owner->MapStreetViewControl = 0;
-		$this->owner->MapOverviewMapControl = 0;
 	}
 
 	/**
@@ -147,12 +93,9 @@ class Addressable extends DataObjectDecorator {
 	 */
 	protected function getAddressFields() {
 		$fields = array(
-			new HeaderField('CompanyHeader', _t('Addressable.COMPANYHEADER', 'Company Name')),
-			new TextField('CompanyName', _t('Addressable.COMPANYNAME', 'Company Name')),
 			new HeaderField('AddressHeader', _t('Addressable.ADDRESSHEADER', 'Address')),
-			new TextField('Address', _t('Addressable.ADDRESS', 'Street address')),
-			new TextField('Suburb', _t('Addressable.SUBURB', 'Suburb'))
-		);
+			new TextField('Address', _t('Addressable.ADDRESS', 'Address')),
+			new TextField('Suburb', _t('Addressable.SUBURB', 'Suburb')));
 
 		$label = _t('Addressable.STATE', 'State');
 		if (is_array($this->allowedStates)) {
@@ -171,39 +114,6 @@ class Addressable extends DataObjectDecorator {
 		} elseif (!is_string($this->allowedCountries)) {
 			$fields[] = new CountryDropdownField('Country', $label);
 		}
-		
-		// Add Additional contact data (not used for geocoding)
-		$fields[] = new HeaderField('ContactHeader', _t('Addressable.CONTACTDATA', 'Contact Details'));
-		$fields[] = new TextField('Telephone', _t('Addressable.TELEPHONE', 'Telephone'));
-		$fields[] = new TextField('Fax', _t('Addressable.FAX', 'Fax'));
-		$fields[] = new TextField('Email', _t('Addressable.EMAIL', 'Email'));
-		
-		
-		// Add Map Setup
-		$fields[] = new HeaderField('MapSetupHeader', _t('Addressable.MAPSETUPHEADER', 'Map Setup'));
-		$fields[] = new NumericField('MapWidth', _t('Addressable.MAPWIDTH', 'Map width'));
-		$fields[] = new NumericField('MapHeight', _t('Addressable.MAPHEIGHT', 'Map height'));
-		
-		// Add Dynamic Map Setup
-		$fields[] = new HeaderField('DynamicMapSetupHeader', _t('Addressable.DYNAMICMAPSETUPHEADER', 'Dynamic Map Setup (Javascript Google Map)'));
-		$fields[] = new NumericField('MapZoom', _t('Addressable.MAPZOOM', 'Zoom Factor of Map (1 = worldview - 21 = street view)'));
-		$fields[] = new CheckboxField('MapPanControl', _t('Addressable.MAPPANCONTROL', 'Show Pan Control'));
-		$fields[] = new CheckboxField('MapZoomControl', _t('Addressable.MAPZOOMCONTROL', 'Show Zoom Control'));
-		
-		$zoomTypes = singleton($this->owner->ClassName)->dbObject('MapZoomStyle')->enumValues();
-		$fields[] = new DropdownField('MapZoomStyle', _t('Addressable.MAPZOOMSTYLE', 'Zoom Control Styling'), $zoomTypes);
-				
-		$fields[] = new CheckboxField('MapTypeControl', _t('Addressable.MAPTYPECONTROL', 'Show Map Type Control'));
-		
-		$typeTypes = singleton($this->owner->ClassName)->dbObject('MapTypeStyle')->enumValues();
-		$fields[] = new DropdownField('MapTypeStyle', _t('Addressable.MAPTYPESTYLE', 'Map Type Control Styling'), $typeTypes);
-		
-		$typeIds = singleton($this->owner->ClassName)->dbObject('MapTypeId')->enumValues();
-		$fields[] = new DropdownField('MapTypeId', _t('Addressable.MAPTYPEID', 'Map Type'), $typeIds);
-		
-		$fields[] = new CheckboxField('MapScaleControl', _t('Addressable.MAPSCALECONTROL', 'Show Scale Control'));
-		$fields[] = new CheckboxField('MapStreetViewControl', _t('Addressable.MAPSTREETVIEWCONTROL', 'Show StreetView Control'));
-		$fields[] = new CheckboxField('MapOverviewMapControl', _t('Addressable.MAPOVERVIEWMAPCONTROL', 'Show Overview Map Control'));
 
 		return $fields;
 	}
@@ -246,29 +156,18 @@ class Addressable extends DataObjectDecorator {
 
 	/**
 	 * Returns a static google map of the address, linking out to the address.
-	 * 
+	 *
+	 * @param  int $width
+	 * @param  int $height
 	 * @return string
 	 */
-	public function AddressMap() {
+	public function AddressMap($width, $height) {
 		$data = $this->owner->customise(array(
+			'Width'    => $width,
+			'Height'   => $height,
 			'AddressEncoded' => rawurlencode($this->getFullAddress())
 		));
 		return $data->renderWith('AddressMap');
-	}
-	
-	/**
-	 * Returns a dynamic google map of the address
-	 * Controls and map setup is set using the CMS
-	 * 
-	 * The Map is rendered using the DynamicAddressMap.ss template
-	 * You can create a custom template in your themes/MYTHEME/templates/ folder
-	 * @return string
-	 */
-	public function DynamicAddressMap() {
-		$data = $this->owner->customise(array(
-			'AddressEncoded' => rawurlencode($this->getFullAddress())
-		));
-		return $data->renderWith('DynamicAddressMap');
 	}
 
 	/**
@@ -295,15 +194,6 @@ class Addressable extends DataObjectDecorator {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Returns a link to googles Routing Service, with the Distributor address as destination address
-	 * 
-	 * @return String
-	 */
-	public function GoogleRoutingLink() {
-		return "http://maps.google.com/maps?daddr=".rawurlencode($this->owner->getFullAddress());
 	}
 
 	/**

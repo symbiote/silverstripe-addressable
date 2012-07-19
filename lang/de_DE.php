@@ -19,25 +19,25 @@ $lang['de_DE']['Addressable']['SUBURB'] = 'Ort';
 $lang['de_DE']['Addressable']['STATE'] = 'Bundeland';
 $lang['de_DE']['Addressable']['POSTCODE'] = 'Postleitzahl';
 $lang['de_DE']['Addressable']['COUNTRY'] = 'Land';
-$lang['de_DE']['Addressable']['CONTACTDATA'] = 'Kontaktdaten';
-$lang['de_DE']['Addressable']['TELEPHONE'] = 'Telefon';
-$lang['de_DE']['Addressable']['FAX'] = 'Fax';
-$lang['de_DE']['Addressable']['EMAIL'] = 'E-Mail';
-$lang['de_DE']['Addressable']['MAPSETUPHEADER'] = 'Google Map Setup';
-$lang['de_DE']['Addressable']['MAPWIDTH'] = 'Breit';
-$lang['de_DE']['Addressable']['MAPHEIGHT'] = 'Höhe';
-$lang['de_DE']['Addressable']['DYNAMICMAPSETUPHEADER'] = 'Setup dynamische Google Map (Javascript Google Map)';
-$lang['de_DE']['Addressable']['MAPZOOM'] = 'Vergrößerung (1 = Weltansicht - 21 = Straßenansicht)';
-$lang['de_DE']['Addressable']['MAPPANCONTROL'] = 'Regler zum Verschieben der Karte anzeigen';
-$lang['de_DE']['Addressable']['MAPZOOMCONTROL'] = 'Zoom Regler anzeigen';
-$lang['de_DE']['Addressable']['MAPZOOMSTYLE'] = 'Stil des Zoom Reglers';
-$lang['de_DE']['Addressable']['MAPTYPECONTROL'] = 'Kartenauswahl anzeigen';
-$lang['de_DE']['Addressable']['MAPTYPESTYLE'] = 'Stil der Kartenauswahl';
-$lang['de_DE']['Addressable']['MAPTYPEID'] = 'Standard Karte';
-$lang['de_DE']['Addressable']['MAPSCALECONTROL'] = 'Maßstab anzeigen';
-$lang['de_DE']['Addressable']['MAPSTREETVIEWCONTROL'] = 'Regler für StreetView anzeigen';
-$lang['de_DE']['Addressable']['MAPOVERVIEWMAPCONTROL'] = 'Übersichtskarte anzeigen';
 
-$lang['de_DE']['DynamicAddressMap.ss']['CALCULATEROUTE'] = 'Anfahrtsbeschreibung berechnen lassen';
+/**
+ * Class GoogleMapsAddressable
+ */
+$lang['de_DE']['GoogleMapsAddressable']['SHOWROUTINGLINK'] = 'Link mit Anfahrtsbeschreibung anzeigen';
+$lang['de_DE']['GoogleMapsAddressable']['MAPSETUPHEADER'] = 'Google Map Setup';
+$lang['de_DE']['GoogleMapsAddressable']['SHOWGOOGLEMAP'] = 'Google Map in Website anzeigen';
+$lang['de_DE']['GoogleMapsAddressable']['MAPWIDTH'] = 'Breite';
+$lang['de_DE']['GoogleMapsAddressable']['MAPHEIGHT'] = 'Höhe';
+$lang['de_DE']['GoogleMapsAddressable']['DYNAMICMAPSETUPHEADER'] = 'Setup dynamische Google Map (Javascript Google Map)';
+$lang['de_DE']['GoogleMapsAddressable']['MAPZOOM'] = 'Vergrößerung (1 = Weltansicht - 21 = Straßenansicht)';
+$lang['de_DE']['GoogleMapsAddressable']['MAPPANCONTROL'] = 'Regler zum Verschieben der Karte anzeigen';
+$lang['de_DE']['GoogleMapsAddressable']['MAPZOOMCONTROL'] = 'Zoom Regler anzeigen';
+$lang['de_DE']['GoogleMapsAddressable']['MAPZOOMSTYLE'] = 'Stil des Zoom Reglers';
+$lang['de_DE']['GoogleMapsAddressable']['MAPTYPECONTROL'] = 'Kartenauswahl anzeigen';
+$lang['de_DE']['GoogleMapsAddressable']['MAPTYPESTYLE'] = 'Stil der Kartenauswahl';
+$lang['de_DE']['GoogleMapsAddressable']['MAPTYPEID'] = 'Standard Karte';
+$lang['de_DE']['GoogleMapsAddressable']['MAPSCALECONTROL'] = 'Maßstab anzeigen';
+$lang['de_DE']['GoogleMapsAddressable']['MAPSTREETVIEWCONTROL'] = 'Regler für StreetView anzeigen';
+$lang['de_DE']['GoogleMapsAddressable']['MAPOVERVIEWMAPCONTROL'] = 'Übersichtskarte anzeigen';
 
-
+$lang['de_DE']['GoogleMapsAddressMap.ss']['CALCULATEROUTE'] = 'Anfahrtsbeschreibung berechnen lassen';

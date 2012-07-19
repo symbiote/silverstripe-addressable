@@ -9,3 +9,7 @@
 // To add automatic geocoding to an object with the Addressable extension,
 // use:
 // Object::add_extension('class', 'Geocodable');
+
+// To add a dynamic Google Maps map to an object, use
+// Object::add_extension('class', 'GoogleMapsAddressable');
+// Object::add_extension('class', 'Geocodable');

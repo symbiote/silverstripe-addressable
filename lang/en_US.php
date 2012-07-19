@@ -7,7 +7,6 @@
 
 global $lang;
 
-
 /**
  * Class Addressable
  */
@@ -20,25 +19,25 @@ $lang['en_US']['Addressable']['SUBURB'] = 'Suburb';
 $lang['en_US']['Addressable']['STATE'] = 'State';
 $lang['en_US']['Addressable']['POSTCODE'] = 'Postcode';
 $lang['en_US']['Addressable']['COUNTRY'] = 'Country';
-$lang['en_US']['Addressable']['CONTACTDATA'] = 'Contact Details';
-$lang['en_US']['Addressable']['TELEPHONE'] = 'Telephone';
-$lang['en_US']['Addressable']['FAX'] = 'Fax';
-$lang['en_US']['Addressable']['EMAIL'] = 'Email';
-$lang['en_US']['Addressable']['MAPSETUPHEADER'] = 'Map Setup';
-$lang['en_US']['Addressable']['MAPWIDTH'] = 'Map Width';
-$lang['en_US']['Addressable']['MAPHEIGHT'] = 'Map height';
-$lang['en_US']['Addressable']['DYNAMICMAPSETUPHEADER'] = 'Dynamic Map Setup (Javascript Google Map)';
-$lang['en_US']['Addressable']['MAPZOOM'] = 'Zoom Factor of Map (1 = worldview - 21 = street view)';
-$lang['en_US']['Addressable']['MAPPANCONTROL'] = 'Show Pan Control';
-$lang['en_US']['Addressable']['MAPZOOMCONTROL'] = 'Show Zoom Control';
-$lang['en_US']['Addressable']['MAPZOOMSTYLE'] = 'Zoom Control Styling';
-$lang['en_US']['Addressable']['MAPTYPECONTROL'] = 'Show Map Type Control';
-$lang['en_US']['Addressable']['MAPTYPESTYLE'] = 'Map Type Control Styling';
-$lang['en_US']['Addressable']['MAPTYPEID'] = 'Map Type';
-$lang['en_US']['Addressable']['MAPSCALECONTROL'] = 'Show Scale Control';
-$lang['en_US']['Addressable']['MAPSTREETVIEWCONTROL'] = 'Show StreetView Control';
-$lang['en_US']['Addressable']['MAPOVERVIEWMAPCONTROL'] = 'Show Overview Map Control';
 
-$lang['en_US']['DynamicAddressMap.ss']['CALCULATEROUTE'] = 'Get routing information';
+/**
+ * Class GoogleMapsAddressable
+ */
+$lang['en_US']['GoogleMapsAddressable']['SHOWROUTINGLINK'] = 'Show Routing Link';
+$lang['en_US']['GoogleMapsAddressable']['MAPSETUPHEADER'] = 'Map Setup';
+$lang['en_US']['GoogleMapsAddressable']['SHOWGOOGLEMAP'] = 'Show Google Map';
+$lang['en_US']['GoogleMapsAddressable']['MAPWIDTH'] = 'Map Width';
+$lang['en_US']['GoogleMapsAddressable']['MAPHEIGHT'] = 'Map height';
+$lang['en_US']['GoogleMapsAddressable']['DYNAMICMAPSETUPHEADER'] = 'Dynamic Map Setup (Javascript Google Map)';
+$lang['en_US']['GoogleMapsAddressable']['MAPZOOM'] = 'Zoom Factor of Map (1 = worldview - 21 = street view)';
+$lang['en_US']['GoogleMapsAddressable']['MAPPANCONTROL'] = 'Show Pan Control';
+$lang['en_US']['GoogleMapsAddressable']['MAPZOOMCONTROL'] = 'Show Zoom Control';
+$lang['en_US']['GoogleMapsAddressable']['MAPZOOMSTYLE'] = 'Zoom Control Styling';
+$lang['en_US']['GoogleMapsAddressable']['MAPTYPECONTROL'] = 'Show Map Type Control';
+$lang['en_US']['GoogleMapsAddressable']['MAPTYPESTYLE'] = 'Map Type Control Styling';
+$lang['en_US']['GoogleMapsAddressable']['MAPTYPEID'] = 'Map Type';
+$lang['en_US']['GoogleMapsAddressable']['MAPSCALECONTROL'] = 'Show Scale Control';
+$lang['en_US']['GoogleMapsAddressable']['MAPSTREETVIEWCONTROL'] = 'Show StreetView Control';
+$lang['en_US']['GoogleMapsAddressable']['MAPOVERVIEWMAPCONTROL'] = 'Show Overview Map Control';
 
-
+$lang['en_US']['GoogleMapsAddressMap.ss']['CALCULATEROUTE'] = 'Get routing information';
