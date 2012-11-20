@@ -38,6 +38,24 @@ class Addressable extends DataExtension {
 	}
 
 	/**
+	 * get the allowed states for this object
+	 *
+	 * @return array
+	 */
+	public function getAllowedStates(){
+		return $this->allowedStates;
+	}
+
+	/**
+	 * get the allowed countries for this object
+	 *
+	 * @return array
+	 */
+	public function getAllowedCountries(){
+		return $this->allowedCountries;
+	}
+
+	/**
 	 * Sets the default postcode regex for new instances.
 	 *
 	 * @param string $regex
