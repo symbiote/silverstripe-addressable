@@ -1,0 +1,17 @@
+{
+    "name": "silverstripe/addressable",
+    "description": "SilverStripe Addressable Module",
+    "type": "silverstripe-module",
+    "keywords": ["silverstripe", "geocoding"],
+    "authors": [
+    {
+        "name": "Andrew Short",
+        "email": "andrew@silverstripe.com.au"
+    }
+    ],
+    "require":
+    {
+        "silverstripe/framework": "3.*",
+	"silverstripe/cms": "3.*"
+    }
+}
