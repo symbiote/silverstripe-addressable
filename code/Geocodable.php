@@ -7,12 +7,10 @@
  */
 class Geocodable extends DataExtension {
 
-
 	public static $db = array(
 		'Lat' => 'Float',
 		'Lng' => 'Float'
 	);
-
 
 	public function onBeforeWrite() {
 		if (!$this->owner->isAddressChanged()) return;
