@@ -7,7 +7,7 @@
  *
  * @package silverstripe-addressable
  */
-class Addressable extends DataObjectDecorator {
+class Addressable extends DataExtension {
 
 	protected static $allowed_states;
 	protected static $allowed_countries;
@@ -38,6 +38,24 @@ class Addressable extends DataObjectDecorator {
 	}
 
 	/**
+	 * get the allowed states for this object
+	 *
+	 * @return array
+	 */
+	public function getAllowedStates(){
+		return $this->allowedStates;
+	}
+
+	/**
+	 * get the allowed countries for this object
+	 *
+	 * @return array
+	 */
+	public function getAllowedCountries(){
+		return $this->allowedCountries;
+	}
+
+	/**
 	 * Sets the default postcode regex for new instances.
 	 *
 	 * @param string $regex
@@ -54,27 +72,20 @@ class Addressable extends DataObjectDecorator {
 		parent::__construct();
 	}
 
-	public function extraStatics() {
-		return array('db' => array(
-			'Address'  => 'Varchar(255)',
-			'Suburb'   => 'varchar(64)',
-			'State'    => 'Varchar(64)',
-			'Postcode' => 'Varchar(10)',
-			'Country'  => 'Varchar(2)'
-		));
+	public static $db = array(
+		'Address'  => 'Varchar(255)',
+		'Suburb'   => 'varchar(64)',
+		'State'    => 'Varchar(64)',
+		'Postcode' => 'Varchar(10)',
+		'Country'  => 'Varchar(2)'
+	);
+	
+
+	public function updateCMSFields(FieldList $fields) {
+		$fields->addFieldsToTab('Root.Address', $this->getAddressFields());
 	}
 
-	public function updateCMSFields($fields) {
-		if ($fields->fieldByName('Root.Content')) {
-			$tab = 'Root.Content.Address';
-		} else {
-			$tab = 'Root.Address';
-		}
-
-		$fields->addFieldsToTab($tab, $this->getAddressFields());
-	}
-
-	public function updateFrontEndFields($fields) {
+	public function updateFrontEndFields(FieldList $fields) {
 		foreach ($this->getAddressFields() as $field) $fields->push($field);
 	}
 
@@ -176,7 +187,8 @@ class Addressable extends DataObjectDecorator {
 	 * @return string
 	 */
 	public function getCountryName() {
-		return Geoip::countrycode2name($this->owner->Country);
+		$list = Zend_Locale::getTranslationList('territory', null, 2);
+		return $list[$this->owner->Country];
 	}
 
 	/**

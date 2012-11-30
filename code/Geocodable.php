@@ -5,14 +5,14 @@
  *
  * @package silverstripe-addressable
  */
-class Geocodable extends DataObjectDecorator {
+class Geocodable extends DataExtension {
 
-	public function extraStatics() {
-		return array('db' => array(
-			'Lat' => 'DOUBLE',
-			'Lng' => 'DOUBLE'
-		));
-	}
+
+	public static $db = array(
+		'Lat' => 'Float',
+		'Lng' => 'Float'
+	);
+
 
 	public function onBeforeWrite() {
 		if (!$this->owner->isAddressChanged()) return;
@@ -28,12 +28,12 @@ class Geocodable extends DataObjectDecorator {
 		$this->owner->Lng = $point['lng'];
 	}
 
-	public function updateCMSFields($fields) {
+	public function updateCMSFields(FieldList $fields) {
 		$fields->removeByName('Lat');
 		$fields->removeByName('Lng');
 	}
 
-	public function updateFrontEndFields($fields) {
+	public function updateFrontEndFields(FieldList $fields) {
 		$this->updateCMSFields($fields);
 	}
 
