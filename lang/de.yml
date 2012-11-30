@@ -1,0 +1,9 @@
+de:
+  Addressable:
+    ADDRESSHEADER: Adresse
+    ADDRESS: Adresse
+    SUBURB: Stadtteil
+    STATE: Bundesland
+    POSTCODE: PLZ
+    COUNTRY: Land
+    INVALID: 'Bitte ein korrektes Format angeben für "%s'
