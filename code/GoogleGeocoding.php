@@ -29,9 +29,10 @@ class GoogleGeocoding {
 		}
 
 		$location = $response->result->geometry->location;
+		$larr = localeconv();
 		return array(
-			'lat' => (float) $location->lat,
-			'lng' => (float) $location->lng
+			'lat' => str_replace($larr['decimal_point'], '.', (float) $location->lat),
+			'lng' => str_replace($larr['decimal_point'], '.', (float) $location->lng)
 		);
 	}
 
