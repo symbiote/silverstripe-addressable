@@ -1,5 +1,5 @@
 {
-	"name": "silverstripe/addressable",
+	"name": "ajshort/silverstripe-addressable",
 	"description": "SilverStripe addressable and geocoding module",
 	"type": "silverstripe-module",
 	"keywords": ["silverstripe", "addressable", "geocoding"],
