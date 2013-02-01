@@ -18,7 +18,7 @@ Documentation
 Quick Usage Overview
 --------------------
 
-In order to add simple address fields (address, suburb, city, postcode and
+In order to add simple address fields (address, suburb, city, state, postcode and
 country) to an object, simply apply to `Addressable` extension:
 
     Object::add_extension('Object', 'Addressable');
