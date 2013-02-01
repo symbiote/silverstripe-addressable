@@ -24,7 +24,13 @@ class RegexTextField extends TextField {
 
 	public function validate($validator) {
 		if($this->value && $this->regex) {
-			if(!preg_match($this->regex, $this->value)) {
+			$valid = false;
+			foreach ($this->regex as $code=>$regex) {
+				if(preg_match($regex, $this->value)){
+					$valid = true;
+				}
+			}
+			if(!$valid) {
 				$message = _t('Addressable.SUBURB', 'Please enter a valid format for "%s".');
 				$validator->validationError($this->name, sprintf($message, $this->name), 'validation');
 				return false;

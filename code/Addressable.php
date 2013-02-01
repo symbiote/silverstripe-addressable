@@ -11,8 +11,20 @@ class Addressable extends DataExtension {
 
 	protected static $allowed_states;
 	protected static $allowed_countries;
-	protected static $postcode_regex= '/^[0-9]+$/';
-
+	protected static $postcode_regex= array(
+	    "US"=>"/^\d{5}([\-]?\d{4})?$/",
+	    "UK"=>"/^(GIR|[A-Z]\d[A-Z\d]??|[A-Z]{2}\d[A-Z\d]??)[ ]??(\d[A-Z]{2})$/",
+	    "DE"=>"/\b((?:0[1-46-9]\d{3})|(?:[1-357-9]\d{4})|(?:[4][0-24-9]\d{3})|(?:[6][013-9]\d{3}))\b/",
+	    "CA"=>"/^([ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ])\ {0,1}(\d[ABCEGHJKLMNPRSTVWXYZ]\d)$/",
+	    "FR"=>"/^(F-)?((2[A|B])|[0-9]{2})[0-9]{3}$/",
+	    "IT"=>"/^(V-|I-)?[0-9]{5}$/",
+	    "AU"=>"/^(0[289][0-9]{2})|([1345689][0-9]{3})|(2[0-8][0-9]{2})|(290[0-9])|(291[0-4])|(7[0-4][0-9]{2})|(7[8-9][0-9]{2})$/",
+	    "NL"=>"/^[1-9][0-9]{3}\s?([a-zA-Z]{2})?$/",
+	    "ES"=>"/^([1-9]{2}|[0-9][1-9]|[1-9][0-9])[0-9]{3}$/",
+	    "DK"=>"/^([D-d][K-k])?( |-)?[1-9]{1}[0-9]{3}$/",
+	    "SE"=>"/^(s-|S-){0,1}[0-9]{3}\s?[0-9]{2}$/",
+	    "BE"=>"/^[1-9]{1}[0-9]{3}$/"
+	);
 	protected $allowedStates;
 	protected $allowedCountries;
 	protected $postcodeRegex;
@@ -74,12 +86,13 @@ class Addressable extends DataExtension {
 
 	public static $db = array(
 		'Address'  => 'Varchar(255)',
-		'Suburb'   => 'varchar(64)',
+		'Suburb'  => 'Varchar(128)',
+		'City'   => 'varchar(64)',
 		'State'    => 'Varchar(64)',
 		'Postcode' => 'Varchar(10)',
 		'Country'  => 'Varchar(2)'
 	);
-	
+
 
 	public function updateCMSFields(FieldList $fields) {
 		$fields->addFieldsToTab('Root.Address', $this->getAddressFields());
@@ -106,7 +119,8 @@ class Addressable extends DataExtension {
 		$fields = array(
 			new HeaderField('AddressHeader', _t('Addressable.ADDRESSHEADER', 'Address')),
 			new TextField('Address', _t('Addressable.ADDRESS', 'Address')),
-			new TextField('Suburb', _t('Addressable.SUBURB', 'Suburb')));
+			new TextField('Suburb', _t('Addressable.SUBURB', 'Suburb')),
+			new TextField('City', _t('Addressable.CITY', 'City')));
 
 		$label = _t('Addressable.STATE', 'State');
 		if (is_array($this->allowedStates)) {
@@ -136,6 +150,7 @@ class Addressable extends DataExtension {
 		return (
 			$this->owner->Address
 			&& $this->owner->Suburb
+			&& $this->owner->City
 			&& $this->owner->State
 			&& $this->owner->Postcode
 			&& $this->owner->Country
@@ -151,6 +166,7 @@ class Addressable extends DataExtension {
 		return sprintf('%s, %s, %s %d, %s',
 			$this->owner->Address,
 			$this->owner->Suburb,
+			$this->owner->City,
 			$this->owner->State,
 			$this->owner->Postcode,
 			$this->getCountryName());
@@ -198,7 +214,7 @@ class Addressable extends DataExtension {
 	 * @return bool
 	 */
 	public function isAddressChanged($level = 1) {
-		$fields  = array('Address', 'Suburb', 'State', 'Postcode', 'Country');
+		$fields  = array('Address', 'Suburb', 'City', 'State', 'Postcode', 'Country');
 		$changed = $this->owner->getChangedFields(false, $level);
 
 		foreach ($fields as $field) {
