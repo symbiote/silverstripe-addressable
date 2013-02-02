@@ -187,7 +187,7 @@ class Addressable extends DataExtension {
 	 * @return string
 	 */
 	public function getCountryName() {
-            return Zend_Locale::getTranslation($this->owner->Country, 'country',  i18n::get_locale());
+            return Zend_Locale::getTranslation($this->owner->Country, 'territory',  i18n::get_locale());
 	}
 
 	/**
