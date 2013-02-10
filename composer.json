@@ -7,12 +7,11 @@
 	"authors": [
 		{
 			"name": "Andrew Short",
-			"email": "andrew@silverstripe.com.au"
+			"email": "andrewjshort@gmail.com"
 		}
 	],
 	"require": {
-		"silverstripe/framework": "3.*",
-		"silverstripe/cms": "3.*"
+		"silverstripe/framework": "3.*"
 	},
 	"extra": {
 		"installer-name": "addressable"
