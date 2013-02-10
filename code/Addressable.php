@@ -157,6 +157,21 @@ class Addressable extends DataExtension {
 	}
 
 	/**
+	 * Returns the full address in VCard Format
+     * See http://tools.ietf.org/html/rfc6350#section-6.3.1
+	 *
+	 * @return string
+	 */
+	public function getFullAddressVCard() {
+		return sprintf(';;%s; %s; %s; %d; %s',
+			$this->owner->Address,
+			$this->owner->Suburb,
+			$this->owner->State,
+			$this->owner->Postcode,
+			$this->getCountryName());
+	}
+
+	/**
 	 * Returns the full address in a simple HTML template.
 	 *
 	 * @return string
@@ -168,18 +183,67 @@ class Addressable extends DataExtension {
 	/**
 	 * Returns a static google map of the address, linking out to the address.
 	 *
-	 * @param  int $width
-	 * @param  int $height
+     * @param  int $width  Required width of Google Map in pixels
+     * @param  int $height Required height of Google Map in pixels
+     * @param  int $zoom Required zoom level.  0 (Zoomed out) - 21 (Zoomed in).
 	 * @return string
 	 */
-	public function AddressMap($width, $height) {
+	public function AddressMap($width, $height, $zoom = 15) {
 		$data = $this->owner->customise(array(
 			'Width'    => $width,
 			'Height'   => $height,
-			'Address' => rawurlencode($this->getFullAddress())
+			'Zoom'   => $zoom,
+			'EncodedFullAddress' => rawurlencode($this->getFullAddress())   // Needed to change $Address -> $EncodedFullAddress, 
+                                                                            //   because whenever AddressMap() was called, it overwrote 
+                                                                            //   static $Address which is used in Addressable
 		));
 		return $data->renderWith('AddressMap');
 	}
+
+	/**
+     * Shortcode handler function to render a static Google Map
+     * To add shortcode handler, add following line to addressable/_config.php 
+     * or mysite/_config.php:
+     *   ShortcodeParser::get()->register('GMap', array('Addressable', 'RenderAddressMap'));
+     * To use shortcode from within CMS editor, add something like:
+     *   [GMap width=260 height=300 siteconfig=1 zoom=10]
+     * returned if an invalid 'urlsegment' is passed in.
+     * @param type $arguments  * 'width' - in pixels 
+     *                         * 'height' - in pixels
+     *                         * 'zoom' - 0 (Zoomed Out) to 21 (Zoomed In)
+     *                         * 'siteconfig' - 1 for using the Address in SiteConfig
+     * @param type $caption
+     * @param type $parser
+     * @return string 
+     */
+    public static function RenderAddressMap($arguments, $caption = null, $parser = null) {
+        $returnResult = null;
+        $zoom = "15";
+        
+        if (!empty($arguments['width']) && !empty($arguments['height'])) {
+            
+            // get zoom level
+            if (!empty($arguments['zoom'])) {              
+                $zoom = $arguments['zoom'];
+            }
+            
+            if (!empty($arguments['siteconfig']) && ($arguments['siteconfig'] == "1")) {    // call SiteConfig's AddressMap
+                if (SiteConfig::current_site_config()->hasExtension('Addressable')) {
+                    $returnResult = SiteConfig::current_site_config()->AddressMap($arguments['width'], $arguments['height'], $zoom);
+                }
+                // else // no Addressable extension so ignore
+            }
+            else {
+                if (Controller::curr()->hasExtension('Addressable')) {
+                    $returnResult = $this->owner->AddressMap($arguments['width'], $arguments['height'], $zoom);
+                    
+                }
+                // else // no Addressable extension so ignore
+            }       
+        }
+        return $returnResult;
+    }       
+    
 
 	/**
 	 * Returns the country name (not the 2 character code).
@@ -187,8 +251,7 @@ class Addressable extends DataExtension {
 	 * @return string
 	 */
 	public function getCountryName() {
-		$list = Zend_Locale::getTranslationList('territory', null, 2);
-		return $list[$this->owner->Country];
+		return Zend_Locale::getTranslation($this->owner->Country, 'territory',  i18n::get_locale());
 	}
 
 	/**

@@ -9,3 +9,6 @@
 // To add automatic geocoding to an object with the Addressable extension,
 // use:
 // Object::add_extension('class', 'Geocodable');
+
+// To add shortcode handler support to display Google Maps use:
+// ShortcodeParser::get()->register('GMap', array('Addressable', 'RenderAddressMap'));

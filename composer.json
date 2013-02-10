@@ -1,5 +1,5 @@
 {
-	"name": "silverstripe/addressable",
+	"name": "ajshort/silverstripe-addressable",
 	"description": "SilverStripe addressable and geocoding module",
 	"type": "silverstripe-module",
 	"keywords": ["silverstripe", "addressable", "geocoding"],
@@ -7,11 +7,13 @@
 	"authors": [
 		{
 			"name": "Andrew Short",
-			"email": "andrew@silverstripe.com.au"
+			"email": "andrewjshort@gmail.com"
 		}
 	],
 	"require": {
-		"silverstripe/framework": "3.*",
-		"silverstripe/cms": "3.*"
+		"silverstripe/framework": "3.*"
+	},
+	"extra": {
+		"installer-name": "addressable"
 	}
 }
