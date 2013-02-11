@@ -36,6 +36,47 @@ class Addressable extends DataExtension {
 	public static function set_allowed_countries($countries) {
 		self::$allowed_countries = $countries;
 	}
+    
+	/**
+     * Shortcode handler function to render a static Google Map
+     * To add shortcode handler, add following line to addressable/_config.php 
+     * or mysite/_config.php:
+     *   ShortcodeParser::get()->register('google_map', array('Addressable', 'RenderAddressMap'));
+     * To use shortcode from within CMS editor, add something like:
+     *   [google_map width=260 height=300 siteconfig=1 zoom=10]
+     * returned if an invalid 'urlsegment' is passed in.
+     * @param type $arguments  * 'width' - in pixels 
+     *                         * 'height' - in pixels
+     *                         * 'zoom' - 0 (Zoomed Out) to 21 (Zoomed In)
+     *                         * 'siteconfig' - 1 for using the Address in SiteConfig
+     * @param type $caption
+     * @param type $parser
+     * @return string 
+     */
+    public static function render_address_map($arguments, $caption = null, $parser = null) {
+        $returnResult = null;
+        $zoom = "15";
+        
+        if (!empty($arguments['width']) && !empty($arguments['height'])) {
+            
+            // get zoom level
+            if (!empty($arguments['zoom'])) {              
+                $zoom = $arguments['zoom'];
+            }
+            
+            if (!empty($arguments['siteconfig']) && ($arguments['siteconfig'] == "1")) {    // call SiteConfig's AddressMap
+                if (SiteConfig::current_site_config()->hasExtension('Addressable')) {
+                    $returnResult = SiteConfig::current_site_config()->AddressMap($arguments['width'], $arguments['height'], $zoom);
+                }
+            } else {  // if current page type has the extension, render based on its address
+                if (Controller::curr()->hasExtension('Addressable')) {
+                    $returnResult = $this->owner->AddressMap($arguments['width'], $arguments['height'], $zoom);
+                    
+                }
+            }       
+        }
+        return $returnResult;
+    }    
 
 	/**
 	 * get the allowed states for this object
@@ -193,57 +234,12 @@ class Addressable extends DataExtension {
 			'Width'    => $width,
 			'Height'   => $height,
 			'Zoom'   => $zoom,
-			'EncodedFullAddress' => rawurlencode($this->getFullAddress())   // Needed to change $Address -> $EncodedFullAddress, 
+			'EncodedFullAddress' => rawurlencode($this->getFullAddress())   // Had to change $Address -> $EncodedFullAddress, 
                                                                             //   because whenever AddressMap() was called, it overwrote 
                                                                             //   static $Address which is used in Addressable
 		));
 		return $data->renderWith('AddressMap');
 	}
-
-	/**
-     * Shortcode handler function to render a static Google Map
-     * To add shortcode handler, add following line to addressable/_config.php 
-     * or mysite/_config.php:
-     *   ShortcodeParser::get()->register('GMap', array('Addressable', 'RenderAddressMap'));
-     * To use shortcode from within CMS editor, add something like:
-     *   [GMap width=260 height=300 siteconfig=1 zoom=10]
-     * returned if an invalid 'urlsegment' is passed in.
-     * @param type $arguments  * 'width' - in pixels 
-     *                         * 'height' - in pixels
-     *                         * 'zoom' - 0 (Zoomed Out) to 21 (Zoomed In)
-     *                         * 'siteconfig' - 1 for using the Address in SiteConfig
-     * @param type $caption
-     * @param type $parser
-     * @return string 
-     */
-    public static function RenderAddressMap($arguments, $caption = null, $parser = null) {
-        $returnResult = null;
-        $zoom = "15";
-        
-        if (!empty($arguments['width']) && !empty($arguments['height'])) {
-            
-            // get zoom level
-            if (!empty($arguments['zoom'])) {              
-                $zoom = $arguments['zoom'];
-            }
-            
-            if (!empty($arguments['siteconfig']) && ($arguments['siteconfig'] == "1")) {    // call SiteConfig's AddressMap
-                if (SiteConfig::current_site_config()->hasExtension('Addressable')) {
-                    $returnResult = SiteConfig::current_site_config()->AddressMap($arguments['width'], $arguments['height'], $zoom);
-                }
-                // else // no Addressable extension so ignore
-            }
-            else {
-                if (Controller::curr()->hasExtension('Addressable')) {
-                    $returnResult = $this->owner->AddressMap($arguments['width'], $arguments['height'], $zoom);
-                    
-                }
-                // else // no Addressable extension so ignore
-            }       
-        }
-        return $returnResult;
-    }       
-    
 
 	/**
 	 * Returns the country name (not the 2 character code).

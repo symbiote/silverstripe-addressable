@@ -26,8 +26,7 @@ class Geocodable extends DataExtension {
 		if(!$point = GoogleGeocoding::address_to_point($address, $region)) {
             $this->owner->GeocodeRetrieved = false;
 			return;
-		}
-        else {
+		} else {
             $this->owner->GeocodeRetrieved = true;
             $this->owner->Lat = $point['lat'];
             $this->owner->Lng = $point['lng'];
