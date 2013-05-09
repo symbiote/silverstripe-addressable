@@ -148,7 +148,7 @@ class Addressable extends DataExtension {
 	 * @return string
 	 */
 	public function getFullAddress() {
-		return sprintf('%s, %s, %s %d, %s',
+		return sprintf('%s, %s, %s %s, %s',
 			$this->owner->Address,
 			$this->owner->Suburb,
 			$this->owner->State,
