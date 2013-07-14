@@ -7,6 +7,10 @@
 class RegexTextField extends TextField {
 
 	protected $regex;
+	
+	public function Type() {
+		return 'regextext text';
+	}
 
 	/**
 	 * @return string
