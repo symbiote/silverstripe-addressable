@@ -9,8 +9,13 @@ class Geocodable extends DataExtension {
 
 	public static $db = array(
 		'Lat' => 'Float',
-		'Lng' => 'Float'
+		'Lng' => 'Float',
+        'GeocodeRetrieved' => 'Boolean'
 	);
+    
+    public static $defaults = array (
+        'GeocodeRetrieved' => 'false'
+    );
 
 	public function onBeforeWrite() {
 		if (!$this->owner->isAddressChanged()) return;
@@ -19,11 +24,13 @@ class Geocodable extends DataExtension {
 		$region  = strtolower($this->owner->Country);
 
 		if(!$point = GoogleGeocoding::address_to_point($address, $region)) {
+            $this->owner->GeocodeRetrieved = false;
 			return;
-		}
-
-		$this->owner->Lat = $point['lat'];
-		$this->owner->Lng = $point['lng'];
+		} else {
+            $this->owner->GeocodeRetrieved = true;
+            $this->owner->Lat = $point['lat'];
+            $this->owner->Lng = $point['lng'];
+        }
 	}
 
 	public function updateCMSFields(FieldList $fields) {
@@ -35,4 +42,7 @@ class Geocodable extends DataExtension {
 		$this->updateCMSFields($fields);
 	}
 
+    public function successfulGeocodeRetrieval() {
+        return $this->owner->GeocodeRetrieved;
+    }
 }

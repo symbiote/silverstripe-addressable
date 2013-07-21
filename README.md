@@ -43,3 +43,11 @@ changed, simple apply the `Geocodable` extension:
 
 This will then use the Google Maps API to translate the address into a latitude
 and longitude on save, and save it into the `Lat` and `Lng` fields.
+
+Syntax to use the shortcode handler to display a static Google map:
+    
+    [google_map width=260 height=300 siteconfig=1 zoom=10]
+
+In the above example, `siteconfig=1` specifies that the address for the Google
+Map should be taken from SiteConfig (where Addressable has been applied to 
+SiteConfig)
