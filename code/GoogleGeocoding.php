@@ -6,8 +6,6 @@
  */
 class GoogleGeocoding {
 
-	const API_URL = 'http://maps.googleapis.com/maps/api/geocode/xml';
-
 	/**
 	 * Convert an address into a latitude and longitude.
 	 *
@@ -16,7 +14,12 @@ class GoogleGeocoding {
 	 * @return array An associative array with lat and lng keys.
 	 */
 	public static function address_to_point($address, $region = null) {
-		$service = new RestfulService(self::API_URL);
+		// Get the URL for the Google API
+		$url = Config::inst()->get('GoogleGeocoding', 'google_api_url');
+		$key = Config::inst()->get('GoogleGeocoding', 'google_api_key');
+
+		// Query the Google API
+		$service = new RestfulService($url);
 		$service->setQueryString(array(
 			'address' => $address,
 			'sensor'  => 'false',
