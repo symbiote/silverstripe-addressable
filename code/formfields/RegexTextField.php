@@ -29,8 +29,9 @@ class RegexTextField extends TextField {
 	public function validate($validator) {
 		if($this->value && $this->regex) {
 			if(!preg_match($this->regex, $this->value)) {
+				$name = $this->Title() ? $this->Title() : $this->name;
 				$message = _t('RegexTextField.VALIDATE', 'Please enter a valid format for "%s".');
-				$validator->validationError($this->name, sprintf($message, $this->name), 'validation');
+				$validator->validationError($this->name, sprintf($message, $name), 'validation');
 				return false;
 			}
 		}
