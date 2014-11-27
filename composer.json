@@ -1,5 +1,5 @@
 {
-	"name": "ajshort/silverstripe-addressable",
+	"name": "silverstripe-australia/addressable",
 	"description": "SilverStripe addressable and geocoding module",
 	"type": "silverstripe-module",
 	"keywords": ["silverstripe", "addressable", "geocoding"],
@@ -15,5 +15,8 @@
 	},
 	"extra": {
 		"installer-name": "addressable"
+	},
+	"replace": {
+		"ajshort/silverstripe-addressable": "self.version"
 	}
 }
