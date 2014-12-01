@@ -102,11 +102,25 @@ class Addressable extends DataExtension {
 	/**
 	 * @return array
 	 */
-	protected function getAddressFields() {
+	public function getAddressFields($_params = array()) {
+		$params = array_merge(
+			array(
+				'includeHeader' => true,
+			),
+			(array)$_params
+		);
+
 		$fields = array(
-			new HeaderField('AddressHeader', _t('Addressable.ADDRESSHEADER', 'Address')),
 			new TextField('Address', _t('Addressable.ADDRESS', 'Address')),
-			new TextField('Suburb', _t('Addressable.SUBURB', 'Suburb')));
+			new TextField('Suburb', _t('Addressable.SUBURB', 'Suburb'))
+		);
+
+		if($params['includeHeader']){
+			array_unshift(
+				$fields,
+				new HeaderField('AddressHeader', _t('Addressable.ADDRESSHEADER', 'Address'))
+			);
+		}
 
 		$label = _t('Addressable.STATE', 'State');
 		if (is_array($this->allowedStates)) {
@@ -125,6 +139,7 @@ class Addressable extends DataExtension {
 		} elseif (!is_string($this->allowedCountries)) {
 			$fields[] = new CountryDropdownField('Country', $label);
 		}
+		$this->owner->extend("updateAddressFields", $fields);
 
 		return $fields;
 	}
