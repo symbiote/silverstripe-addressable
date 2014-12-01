@@ -86,7 +86,9 @@ class Addressable extends DataExtension {
 	}
 
 	public function updateFrontEndFields(FieldList $fields) {
-		foreach ($this->getAddressFields() as $field) $fields->push($field);
+		if(!$fields->dataFieldByName("Address")){
+			$fields->merge($this->getAddressFields());
+		}
 	}
 
 	public function populateDefaults() {
