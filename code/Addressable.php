@@ -82,7 +82,14 @@ class Addressable extends DataExtension {
 	
 
 	public function updateCMSFields(FieldList $fields) {
-		$fields->addFieldsToTab('Root.Address', $this->getAddressFields());
+		if ($fields->hasTabSet()) {
+			$fields->addFieldsToTab('Root.Address', $this->getAddressFields());
+		} else {
+			$newFields = $this->getAddressFields();
+			foreach ($newFields as $field) {
+				$fields->push($field);
+			}
+		}
 	}
 
 	public function updateFrontEndFields(FieldList $fields) {
