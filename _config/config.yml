@@ -1,0 +1,5 @@
+name: Addressable
+---
+GoogleGeocoding:
+  google_api_url: 'http://maps.googleapis.com/maps/api/geocode/xml'
+  google_api_key: ''
