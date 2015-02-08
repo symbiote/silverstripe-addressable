@@ -72,14 +72,14 @@ class Addressable extends DataExtension {
 		parent::__construct();
 	}
 
-	public static $db = array(
+	private static $db = array(
 		'Address'  => 'Varchar(255)',
 		'Suburb'   => 'varchar(64)',
 		'State'    => 'Varchar(64)',
 		'Postcode' => 'Varchar(10)',
 		'Country'  => 'Varchar(2)'
 	);
-	
+
 
 	public function updateCMSFields(FieldList $fields) {
 		if ($fields->hasTabSet()) {
