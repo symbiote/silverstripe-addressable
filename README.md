@@ -1,5 +1,6 @@
 SilverStripe Addressable Module
 ===============================
+[![Build Status](https://travis-ci.org/silverstripe-australia/silverstripe-addressable.svg)](https://travis-ci.org/silverstripe-australia/silverstripe-addressable)
 
 The Addressable module adds address fields to an object, and also has support
 for automatic geocoding.
