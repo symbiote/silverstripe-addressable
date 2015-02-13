@@ -37,11 +37,11 @@ class GeocodableTest extends AddressableBuilder{
 		$geoCodable = AddressableTestDataObject::get()->byID($silverStripeID);
 		$geoCodable2 = AddressableTestDataObject::get()->byID($dynamicID);
 
-		$silverstripeLat = -41.29;
-		$silverstripeLng = 174.78;
+		$silverstripeLat = -41.29256;
+		$silverstripeLng = 174.77896;
 
-		$dynamicLat = 43.74;
-		$dynamicLng =  -87.72;
+		$dynamicLat = 43.73770;
+		$dynamicLng =  -87.72003;
 
 		$this->assertTrue($geoCodable->Lat == $silverstripeLat);
 		$this->assertTrue($geoCodable->Lng == $silverstripeLng);
