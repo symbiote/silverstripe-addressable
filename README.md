@@ -22,7 +22,12 @@ Quick Usage Overview
 In order to add simple address fields (address, suburb, city, postcode and
 country) to an object, simply apply to `Addressable` extension:
 
-    Object::add_extension('Object', 'Addressable');
+```yml
+Page:
+  extensions:
+    - Addressable
+```
+
 
 In order to then render the full address into a template, you can use either
 `$FullAddress` to return a simple string, or `$FullAddressHTML` to render
@@ -40,7 +45,20 @@ the value is an array, the user will be presented with a dropdown field.
 To add automatic geocoding to an `Addressable` object when the address is
 changed, simple apply the `Geocodable` extension:
 
-    Object::add_extension('Object', 'Geocodable');
+```yml
+
+Page: 
+  extensions: 
+    - Geocodable
+
+```
 
 This will then use the Google Maps API to translate the address into a latitude
-and longitude on save, and save it into the `Lat` and `Lng` fields.
+and longitude on save, and save it into the `Lat` and `Lng` fields. NOTE - to support
+this, you _must_ specify a Google app Server API key
+
+```yml
+GoogleGeocoding:
+  google_api_key: {your_google_server_api_key}
+  
+```
