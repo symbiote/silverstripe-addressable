@@ -23,7 +23,8 @@ class GoogleGeocoding {
 		$service->setQueryString(array(
 			'address' => $address,
 			'sensor'  => 'false',
-			'region'  => $region
+			'region'  => $region,
+			'key'		=> $key
 		));
 		$response = $service->request()->simpleXML();
 

@@ -18,7 +18,10 @@
 		"silverstripe/framework": "3.*"
 	},
 	"extra": {
-		"installer-name": "addressable"
+		"installer-name": "addressable",
+		"branch-alias": {
+			"dev-master": "1.1.x-dev"
+		}
 	},
 	"replace": {
 		"ajshort/silverstripe-addressable": "self.version"
