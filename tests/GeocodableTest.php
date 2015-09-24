@@ -4,18 +4,18 @@ class GeocodableTest extends AddressableBuilder{
 
 	protected static $use_draft_site = true;
 
-	function setUp(){
+	function setUp() {
 		parent::setUp();
 
 	}
 
-	function tearDown(){
+	function tearDown() {
 
 
 		parent::tearDown();
 	}
 
-	function testGeocodable(){
+	function testGeocodable() {
 
 		$silverStripe = new AddressableTestDataObject();
 		$silverStripe->Address = '101-103 Courtenay Place';
