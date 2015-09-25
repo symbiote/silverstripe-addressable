@@ -225,7 +225,24 @@ class Addressable extends DataExtension {
 		$changed = $this->owner->getChangedFields(false, $level);
 
 		foreach ($fields as $field) {
-			if (array_key_exists($field, $changed)) return true;
+			if (array_key_exists($field, $changed) && isset($changed[$field]['before'])) return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns TRUE if Lng or Lat fields have changed.
+	 *
+	 * @param  int $level
+	 * @return bool
+	 */
+	public function isGeocodeChanged($level = 1) {
+		$fields  = array('Lng', 'Lat');
+		$changed = $this->owner->getChangedFields(false, $level);
+
+		foreach ($fields as $field) {
+			if (array_key_exists($field, $changed) && isset($changed[$field]['before'])) return true;
 		}
 
 		return false;

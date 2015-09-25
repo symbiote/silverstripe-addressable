@@ -13,22 +13,39 @@ class Geocodable extends DataExtension {
 	);
 
 	public function onBeforeWrite() {
-		if (!$this->owner->isAddressChanged()) return;
 
-		$address = $this->owner->getFullAddress();
-		$region  = strtolower($this->owner->Country);
+		if ($this->owner->isAddressChanged()) {
 
-		if(!$point = GoogleGeocoding::address_to_point($address, $region)) {
-			return;
+			$address = $this->owner->getFullAddress();
+			$region  = strtolower($this->owner->Country);
+
+			if(!$point = GoogleGeocoding::address_to_point($address, $region)) {
+				return;
+			}
+
+			$this->owner->Lat = $point['lat'];
+			$this->owner->Lng = $point['lng'];
 		}
+		if ($this->owner->isGeocodeChanged()) {
 
-		$this->owner->Lat = $point['lat'];
-		$this->owner->Lng = $point['lng'];
+			$lat = $this->owner->Lat;
+			$lng  = $this->owner->Lng;
+
+			if(!$address = GoogleGeocoding::point_to_address($lat, $lng)) {
+				return;
+			}
+
+			$this->owner->Address	= $address['StreetNumber'] . ' ' . $address['Address'];
+			$this->owner->Suburb	= $address['Suburb'];
+			$this->owner->State		= $address['State'];
+			$this->owner->Postcode	= $address['Postcode'];
+			$this->owner->Country	= $address['CountryCode'];
+		}
 	}
 
 	public function updateCMSFields(FieldList $fields) {
-		$fields->removeByName('Lat');
-		$fields->removeByName('Lng');
+		//$fields->removeByName('Lat');
+		//$fields->removeByName('Lng');
 	}
 
 	public function updateFrontEndFields(FieldList $fields) {
