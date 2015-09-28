@@ -42,7 +42,7 @@ class Addressable extends DataExtension {
 	 *
 	 * @return array
 	 */
-	public function getAllowedStates(){
+	public function getAllowedStates() {
 		return $this->allowedStates;
 	}
 
@@ -51,7 +51,7 @@ class Addressable extends DataExtension {
 	 *
 	 * @return array
 	 */
-	public function getAllowedCountries(){
+	public function getAllowedCountries() {
 		return $this->allowedCountries;
 	}
 
@@ -93,7 +93,7 @@ class Addressable extends DataExtension {
 	}
 
 	public function updateFrontEndFields(FieldList $fields) {
-		if(!$fields->dataFieldByName("Address")){
+		if(!$fields->dataFieldByName("Address")) {
 			$fields->merge($this->getAddressFields());
 		}
 	}
@@ -124,7 +124,7 @@ class Addressable extends DataExtension {
 			new TextField('Suburb', _t('Addressable.SUBURB', 'Suburb'))
 		);
 
-		if($params['includeHeader']){
+		if($params['includeHeader']) {
 			array_unshift(
 				$fields,
 				new HeaderField('AddressHeader', _t('Addressable.ADDRESSHEADER', 'Address'))

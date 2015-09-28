@@ -2,18 +2,18 @@
 
 class AddressableTest extends AddressableBuilder{
 
-	function setUp(){
+	function setUp() {
 		parent::setUp();
 
 	}
 
-	function tearDown(){
+	function tearDown() {
 
 
 		parent::tearDown();
 	}
 
-	function testAddressableWrite(){
+	function testAddressableWrite() {
 
 		$silverStripe = new AddressableTestDataObject();
 		$silverStripe->Address = '101-103 Courtenay Place';
