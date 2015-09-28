@@ -9,8 +9,8 @@ class GoogleGeocoding {
 	/**
 	 * Convert an address into a latitude and longitude.
 	 *
-	 * @param  string $address The address to geocode.
-	 * @param  string $region  An optional two letter region code.
+	 * @param string $address The address to geocode.
+	 * @param string $region  An optional two letter region code.
 	 * @return array An associative array with lat and lng keys.
 	 */
 	public static function address_to_point($address, $region = null) {
