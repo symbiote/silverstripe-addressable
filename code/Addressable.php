@@ -116,7 +116,7 @@ class Addressable extends DataExtension {
 			array(
 				'includeHeader' => true,
 			),
-			(array)$_params
+			(array) $_params
 		);
 
 		$fields = array(
