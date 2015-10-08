@@ -192,8 +192,8 @@ class Addressable extends DataExtension {
 	/**
 	 * Returns a static google map of the address, linking out to the address.
 	 *
-	 * @param  int $width
-	 * @param  int $height
+	 * @param int $width
+	 * @param int $height
 	 * @return string
 	 */
 	public function AddressMap($width, $height) {
@@ -217,7 +217,7 @@ class Addressable extends DataExtension {
 	/**
 	 * Returns TRUE if any of the address fields have changed.
 	 *
-	 * @param  int $level
+	 * @param int $level
 	 * @return bool
 	 */
 	public function isAddressChanged($level = 1) {
