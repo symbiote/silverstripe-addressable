@@ -30,7 +30,7 @@ Page:
 
 
 In order to then render the full address into a template, you can use either
-`$FullAddress` to return a simple string or `$FullAddressHTML` to render
+`$FullAddress` to return a simple string, or `$FullAddressHTML` to render
 the address into a HTML `<address>` tag.
 
 You can define a global set of allowed states or countries using
