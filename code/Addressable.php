@@ -68,7 +68,7 @@ class Addressable extends DataExtension {
 		$this->allowedStates    = self::$allowed_states;
 		$this->allowedCountries = self::$allowed_countries;
         if (!empty($customRegex = Config::inst()->get('Addressable', 'set_postcode_regex'))) {
-            $this->set_postcode_regex($customRegex);
+            self::set_postcode_regex($customRegex);
         }
 		$this->postcodeRegex    = self::$postcode_regex;
 
