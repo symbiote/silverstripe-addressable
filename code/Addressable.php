@@ -11,7 +11,7 @@ class Addressable extends DataExtension {
 
 	protected static $allowed_states;
 	protected static $allowed_countries;
-	protected static $postcode_regex= '/^[0-9]+$/';
+	protected static $postcode_regex = '/^[0-9]+$/';
 
 	protected $allowedStates;
 	protected $allowedCountries;
@@ -67,6 +67,9 @@ class Addressable extends DataExtension {
 	public function __construct() {
 		$this->allowedStates    = self::$allowed_states;
 		$this->allowedCountries = self::$allowed_countries;
+        if (!empty($customRegex = Config::inst()->get('Addressable', 'set_postcode_regex'))) {
+            self::set_postcode_regex($customRegex);
+        }
 		$this->postcodeRegex    = self::$postcode_regex;
 
 		parent::__construct();

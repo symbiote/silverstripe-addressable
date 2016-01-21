@@ -62,3 +62,8 @@ GoogleGeocoding:
   google_api_key: {your_google_server_api_key}
   
 ```
+
+Allow different postcode regex (e.g. UK postcode with numbers and letters mixed) in config.yml
+```yml
+Addressable:
+  set_postcode_regex: '/^[0-9A-Za-z]+$/'
