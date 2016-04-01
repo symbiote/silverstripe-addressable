@@ -176,12 +176,15 @@ class Addressable extends DataExtension {
 	 * @return string
 	 */
 	public function getFullAddress() {
-		return sprintf('%s, %s, %s %s, %s',
+		$parts = array(
 			$this->owner->Address,
 			$this->owner->Suburb,
 			$this->owner->State,
 			$this->owner->Postcode,
-			$this->getCountryName());
+			$this->owner->getCountryName()
+		);
+
+		return implode(', ', array_filter($parts));
 	}
 
 	/**
