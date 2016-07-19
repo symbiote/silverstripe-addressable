@@ -14,7 +14,11 @@ class Geocodable extends DataExtension {
 
 	public function onBeforeWrite() {
 		if (!$this->owner->isAddressChanged()) return;
-
+        /*
+         * Enable/Disable Geocode mapping
+         */
+        $isGeocodable = Config::inst()->get('Geocodable', 'is_geocodable');
+        if ($isGeocodable) {
 		$address = $this->owner->getFullAddress();
 		$region  = strtolower($this->owner->Country);
 
@@ -24,6 +28,7 @@ class Geocodable extends DataExtension {
 
 		$this->owner->Lat = $point['lat'];
 		$this->owner->Lng = $point['lng'];
+        }
 	}
 
 	public function updateCMSFields(FieldList $fields) {
