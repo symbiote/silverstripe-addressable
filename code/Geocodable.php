@@ -10,8 +10,8 @@ class Geocodable extends DataExtension
 {
 
     private static $db = array(
-        'Lat' => 'Decimal(9,5)',
-        'Lng' => 'Decimal(9,5)'
+        'Lat' => 'Decimal(10,7)',
+        'Lng' => 'Decimal(10,7)'
     );
 
     public function onBeforeWrite()
