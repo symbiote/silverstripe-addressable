@@ -26,6 +26,10 @@ class GoogleGeocoding {
 			'region'  => $region,
 			'key'		=> $key
 		));
+		if (!$service->request()->getBody()) {
+			// If blank response, ignore to avoid XML parsing errors.
+			return false;
+		}
 		$response = $service->request()->simpleXML();
 
 		if ($response->status != 'OK') {
