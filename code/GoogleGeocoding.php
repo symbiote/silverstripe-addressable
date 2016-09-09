@@ -26,6 +26,15 @@ class GoogleGeocoding {
 			'region'  => $region,
 			'key'		=> $key
 		));
+		if ($service->request()->getStatusCode() === 500) {
+			$errorMessage = '500 status code, Are you sure your SSL certificates are properly setup? You can workaround this locally by setting CURLOPT_SSL_VERIFYPEER to "false", however this is not recommended for security reasons.';
+			if (Director::isDev()) {
+				throw new Exception($errorMessage);
+			} else {
+				user_error($errorMessage);
+			}
+			return false;
+		}
 		if (!$service->request()->getBody()) {
 			// If blank response, ignore to avoid XML parsing errors.
 			return false;
