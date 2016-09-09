@@ -39,8 +39,26 @@ class Geocodable extends DataExtension
 
     public function updateCMSFields(FieldList $fields)
     {
-        $fields->removeByName('Lat');
-        $fields->removeByName('Lng');
+        $fields->removeByName(array('Lat', 'Lng'));
+
+        // Adds Lat/Lng fields for viewing in the CMS
+        $compositeField = CompositeField::create();
+        if ($this->owner->Lng && $this->owner->Lat) {
+            $googleMapURL = 'http://maps.google.com/?q='.$this->owner->Lat.','.$this->owner->Lng;
+            $googleMapDiv = '<div class="field"><label class="left" for="Form_EditForm_MapURL_Readonly">Google Map</label><div class="middleColumn"><a href="'.$googleMapURL.'" target="_blank">'.$googleMapURL.'</a></div></div>';
+            $compositeField->push(LiteralField::create('MapURL_Readonly', $googleMapDiv));
+        }
+        $compositeField->push(ReadonlyField::create('Lat_Readonly', 'Lat', $this->owner->Lat));
+        $compositeField->push(ReadonlyField::create('Lng_Readonly', 'Lng', $this->owner->Lng));
+        if ($this->owner->hasExtension('Addressable')) {
+            // If using addressable, put the fields with it
+            $fields->addFieldToTab('Root.Address', ToggleCompositeField::create('Coordinates', 'Coordinates', $compositeField));
+        } else if ($this->owner instanceof SiteTree) {
+            // If SIteTree but not using Addressable, put in 'Metadata' toggle composite field
+            $fields->insertAfter($compositeField, 'ExtraMeta');
+        } else {
+            $fields->addFieldToTab('Root.Main', ToggleCompositeField::create('Coordinates', 'Coordinates', $compositeField));
+        }
     }
 
     public function updateFrontEndFields(FieldList $fields)
