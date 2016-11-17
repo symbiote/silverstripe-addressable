@@ -42,7 +42,7 @@ class Geocodable extends DataExtension
 
     public function updateCMSFields(FieldList $fields)
     {
-        $fields->removeByName(array('Lat', 'Lng'));
+        $fields->removeByName(array('Lat', 'Lng', 'LatLngOverride'));
 
         // Adds Lat/Lng fields for viewing in the CMS
         $compositeField = CompositeField::create();
