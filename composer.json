@@ -1,5 +1,5 @@
 {
-	"name": "silverstripe-australia/addressable",
+	"name": "symbiote/silverstripe-addressable",
 	"description": "SilverStripe addressable and geocoding module",
 	"type": "silverstripe-module",
 	"keywords": ["silverstripe", "addressable", "geocoding"],
@@ -20,7 +20,7 @@
 	"extra": {
 		"installer-name": "addressable",
 		"branch-alias": {
-			"dev-master": "1.2.x-dev"
+			"dev-master": "2.0.x-dev"
 		}
 	},
 	"replace": {
