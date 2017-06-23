@@ -1,13 +1,13 @@
 SilverStripe Addressable Module
 ===============================
-[![Build Status](https://travis-ci.org/silverstripe-australia/silverstripe-addressable.svg)](https://travis-ci.org/silverstripe-australia/silverstripe-addressable)
+[![Build Status](https://travis-ci.org/symbiote/silverstripe-addressable.svg)](https://travis-ci.org/symbiote/silverstripe-addressable)
 
 The Addressable module adds address fields to an object, and also has support
 for automatic geocoding.
 
 Maintainer Contact
 ------------------
-*  Marcus Nyeholt (<marcus@silverstripe.com.au>)
+*  Marcus Nyeholt (<marcus@symbiote.com.au>)
 
 Requirements
 ------------
