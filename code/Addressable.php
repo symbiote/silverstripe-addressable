@@ -199,15 +199,18 @@ class Addressable extends DataExtension {
 	/**
 	 * Returns a static google map of the address, linking out to the address.
 	 *
-	 * @param int $width
-	 * @param int $height
+	 * @param int $width (optional)
+	 * @param int $height (optional)
+	 * @param int $scale (optional)
 	 * @return string
 	 */
-	public function AddressMap($width, $height) {
+	public function AddressMap($width = 320, $height = 240, $scale = 1) {
 		$data = $this->owner->customise(array(
 			'Width'    => $width,
 			'Height'   => $height,
-			'Address' => rawurlencode($this->getFullAddress())
+			'Scale'    => $scale,
+			'Address'  => rawurlencode($this->getFullAddress()),
+			'Key'      => Config::inst()->get('GoogleGeocoding', 'google_api_key')
 		));
 		return $data->renderWith('AddressMap');
 	}
