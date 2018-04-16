@@ -11,27 +11,24 @@ class Geocodable extends DataExtension
 
     private static $db = array(
         'LatLngOverride' => 'Boolean',
-        'Lat'            => 'Decimal(10,7)',
-        'Lng'            => 'Decimal(10,7)',
+        'Lat' => 'Decimal(10,7)',
+        'Lng' => 'Decimal(10,7)'
     );
 
     public function onBeforeWrite()
     {
-        if (!Config::inst()->get('Geocodable', 'is_geocodable'))
-        {
+        if (!Config::inst()->get('Geocodable', 'is_geocodable')) {
             return;
         }
-        if ($this->owner->LatLngOverride)
-        {
+        if ($this->owner->LatLngOverride) {
             return;
         }
-        if (!$this->owner->hasMethod('isAddressChanged') || !$this->owner->isAddressChanged())
-        {
+        if (!$this->owner->hasMethod('isAddressChanged') || !$this->owner->isAddressChanged()) {
             return;
         }
 
         $address = $this->owner->getFullAddress();
-        $region  = strtolower($this->owner->Country);
+        $region = strtolower($this->owner->Country);
 
         $point = GoogleGeocoding::address_to_point($address, $region);
         if (!$point)
@@ -51,34 +48,25 @@ class Geocodable extends DataExtension
         $compositeField = CompositeField::create();
         $compositeField->push($overrideField = CheckboxField::create('LatLngOverride', 'Override Latitude and Longitude?'));
         $overrideField->setDescription('Check this box and save to be able to edit the latitude and longitude manually.');
-        if ($this->owner->Lng && $this->owner->Lat)
-        {
-            $googleMapURL = 'http://maps.google.com/?q=' . $this->owner->Lat . ',' . $this->owner->Lng;
-            $googleMapDiv = '<div class="field"><label class="left" for="Form_EditForm_MapURL_Readonly">Google Map</label><div class="middleColumn"><a href="' . $googleMapURL . '" target="_blank">' . $googleMapURL . '</a></div></div>';
+        if ($this->owner->Lng && $this->owner->Lat) {
+            $googleMapURL = 'http://maps.google.com/?q='.$this->owner->Lat.','.$this->owner->Lng;
+            $googleMapDiv = '<div class="field"><label class="left" for="Form_EditForm_MapURL_Readonly">Google Map</label><div class="middleColumn"><a href="'.$googleMapURL.'" target="_blank">'.$googleMapURL.'</a></div></div>';
             $compositeField->push(LiteralField::create('MapURL_Readonly', $googleMapDiv));
         }
-        if ($this->owner->LatLngOverride)
-        {
+        if ($this->owner->LatLngOverride) {
             $compositeField->push(TextField::create('Lat', 'Lat'));
             $compositeField->push(TextField::create('Lng', 'Lng'));
-        }
-        else
-        {
+        } else {
             $compositeField->push(ReadonlyField::create('Lat_Readonly', 'Lat', $this->owner->Lat));
             $compositeField->push(ReadonlyField::create('Lng_Readonly', 'Lng', $this->owner->Lng));
         }
-        if ($this->owner->hasExtension('Addressable'))
-        {
+        if ($this->owner->hasExtension('Addressable')) {
             // If using addressable, put the fields with it
             $fields->addFieldToTab('Root.Address', ToggleCompositeField::create('Coordinates', 'Coordinates', $compositeField));
-        }
-        else if ($this->owner instanceof SiteTree)
-        {
+        } else if ($this->owner instanceof SiteTree) {
             // If SIteTree but not using Addressable, put after 'Metadata' toggle composite field
             $fields->insertAfter($compositeField, 'ExtraMeta');
-        }
-        else
-        {
+        } else {
             $fields->addFieldToTab('Root.Main', ToggleCompositeField::create('Coordinates', 'Coordinates', $compositeField));
         }
     }
