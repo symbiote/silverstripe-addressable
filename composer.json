@@ -20,7 +20,7 @@
 	"extra": {
 		"installer-name": "addressable",
 		"branch-alias": {
-			"dev-master": "2.0.x-dev"
+			"dev-master": "3.0.x-dev"
 		}
 	},
 	"replace": {
