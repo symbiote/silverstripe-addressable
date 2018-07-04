@@ -73,7 +73,7 @@ class Geocodable extends DataExtension
 
     public function updateFrontEndFields(FieldList $fields)
     {
-        $this->updateCMSFields($fields);
+        $fields->removeByName(array('LatLngOverride', 'Lat', 'Lng'));
     }
 
 }
