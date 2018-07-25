@@ -37,8 +37,7 @@ class Geocodable extends DataExtension
         $region = strtolower($this->owner->Country);
 
         $point = GoogleGeocoding::address_to_point($address, $region);
-        if (!$point)
-        {
+        if (!$point) {
             return;
         }
 
@@ -69,7 +68,7 @@ class Geocodable extends DataExtension
         if ($this->owner->hasExtension('Addressable')) {
             // If using addressable, put the fields with it
             $fields->addFieldToTab('Root.Address', ToggleCompositeField::create('Coordinates', 'Coordinates', $compositeField));
-        } else if ($this->owner instanceof SiteTree) {
+        } elseif ($this->owner instanceof SiteTree) {
             // If SIteTree but not using Addressable, put after 'Metadata' toggle composite field
             $fields->insertAfter($compositeField, 'ExtraMeta');
         } else {
@@ -81,5 +80,4 @@ class Geocodable extends DataExtension
     {
         $fields->removeByName(array('LatLngOverride', 'Lat', 'Lng'));
     }
-
 }
