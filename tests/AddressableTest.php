@@ -1,5 +1,9 @@
 <?php
 
+namespace Symbiote\Addressable\Tests;
+
+use SilverStripe\Dev\SapphireTest;
+
 class AddressableTest extends SapphireTest
 {
     protected $usesDatabase = true;

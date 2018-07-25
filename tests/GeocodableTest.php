@@ -1,5 +1,11 @@
 <?php
 
+namespace Symbiote\Addressable\Tests;
+
+use SilverStripe\Core\Config\Config;
+use Symbiote\Addressable\Geocodable;
+use SilverStripe\Dev\SapphireTest;
+
 class GeocodableTest extends SapphireTest
 {
     protected static $use_draft_site = true;
@@ -52,7 +58,7 @@ class GeocodableTest extends SapphireTest
      */
     public function testDisableLatLngUpdate()
     {
-        Config::inst()->update('Geocodable', 'is_geocodable', false);
+        Config::inst()->update(Geocodable::class, 'is_geocodable', false);
 
         $record = new GeocodableDataObjectTest();
         $record->Address = '101-103 Courtenay Place';

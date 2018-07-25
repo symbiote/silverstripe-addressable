@@ -1,4 +1,18 @@
 <?php
+
+namespace Symbiote\Addressable;
+
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\HeaderField;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\i18n\i18n;
+use SilverStripe\ORM\DataExtension;
+use RegexTextField;
+use CountryDropdownField;
+use Zend_Locale;
+
 /**
  * Adds simple address fields to an object, as well as fields to manage them.
  *

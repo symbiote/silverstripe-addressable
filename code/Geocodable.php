@@ -1,5 +1,18 @@
 <?php
 
+namespace Symbiote\Addressable;
+
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\CompositeField;
+use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\ReadonlyField;
+use SilverStripe\Forms\ToggleCompositeField;
+use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\ORM\DataExtension;
+
 /**
  * Adds automatic geocoding to a {@link Addressable} object. Uses the Google
  * Maps API to save latitude and longitude on write.

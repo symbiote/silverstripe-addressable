@@ -1,4 +1,12 @@
 <?php
+
+namespace Symbiote\Addressable;
+
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Control\Director;
+use RestfulService;
+use Exception;
+
 /**
  * A utility class for geocoding addresses using the google maps API.
  *

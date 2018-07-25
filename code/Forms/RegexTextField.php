@@ -1,4 +1,9 @@
 <?php
+
+namespace Symbiote\Addressable;
+
+use SilverStripe\Forms\TextField;
+
 /**
  * A text field that validates that its contents match a regular expression.
  *
