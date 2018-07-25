@@ -1,21 +1,10 @@
 <?php
 
-class AddressableTest extends AddressableBuilder{
+class AddressableTest extends SapphireTest {
+    protected $usesDatabase = true;
 
-	function setUp() {
-		parent::setUp();
-
-	}
-
-	function tearDown() {
-
-
-		parent::tearDown();
-	}
-
-	function testAddressableWrite() {
-
-		$silverStripe = new AddressableTestDataObject();
+	public function testAddressableWrite() {
+		$silverStripe = new AddressableDataObjectTest();
 		$silverStripe->Address = '101-103 Courtenay Place';
 		$silverStripe->Suburb = 'Wellington';
 		$silverStripe->Postcode = '6011';
@@ -25,7 +14,7 @@ class AddressableTest extends AddressableBuilder{
 
 		$this->assertTrue($silverStripeID > 0);
 
-		$dynamic = new AddressableTestDataObject();
+		$dynamic = new AddressableDataObjectTest();
 		$dynamic->Address = '1526 South 12th Street';
 		$dynamic->Suburb = 'Sheboygan';
 		$dynamic->State = 'WI';
@@ -36,8 +25,8 @@ class AddressableTest extends AddressableBuilder{
 
 		$this->assertTrue($dynamicID > 0);
 
-		$addressable = AddressableTestDataObject::get()->byID($silverStripeID);
-		$addressable2 = AddressableTestDataObject::get()->byID($dynamicID);
+		$addressable = AddressableDataObjectTest::get()->byID($silverStripeID);
+		$addressable2 = AddressableDataObjectTest::get()->byID($dynamicID);
 
 
 		$this->assertTrue($addressable->Address == '101-103 Courtenay Place');
@@ -50,7 +39,5 @@ class AddressableTest extends AddressableBuilder{
 		$this->assertTrue($addressable2->State == 'WI');
 		$this->assertTrue($addressable2->Postcode == '53081');
 		$this->assertTrue($addressable2->Country == 'US');
-
 	}
-
 }

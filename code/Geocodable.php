@@ -18,12 +18,18 @@ class Geocodable extends DataExtension
     public function onBeforeWrite()
     {
         if (!Config::inst()->get('Geocodable', 'is_geocodable')) {
+            // Allow user-code to disable Geocodable. This was added
+            // so that dev/tasks that write a *lot* of Geocodable records can
+            // ignore this expensive logic.
             return;
         }
         if ($this->owner->LatLngOverride) {
+            // A CMS user disabled automatical retrieval of Lat/Lng
+            // and most likely input their own values.
             return;
         }
-        if (!$this->owner->hasMethod('isAddressChanged') || !$this->owner->isAddressChanged()) {
+        if (!$this->owner->hasMethod('isAddressChanged') ||
+            !$this->owner->isAddressChanged()) {
             return;
         }
 
