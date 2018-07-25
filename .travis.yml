@@ -34,5 +34,5 @@ before_script:
   - cd ~/builds/ss
 
 script:
-  - if [[ $PHPCS_TEST ]]; then vendor/bin/phpcs addressable/src/ addressable/tests/ -n; fi
+  - if [[ $PHPCS_TEST ]]; then vendor/bin/phpcs addressable/code/ addressable/tests/ -n; fi
   - vendor/bin/phpunit addressable/tests/
