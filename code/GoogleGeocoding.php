@@ -37,15 +37,6 @@ class GoogleGeocoding
             }
             return false;
         }
-        if ($service->request()->getStatusCode() !== 200) {
-            $errorMessage = $service->request()->getBody();
-            if (Director::isDev()) {
-                throw new Exception($errorMessage);
-            } else {
-                user_error($errorMessage, E_USER_WARNING);
-            }
-            return false;
-        }
         if (!$service->request()->getBody()) {
             // If blank response, ignore to avoid XML parsing errors.
             return false;
