@@ -23,8 +23,8 @@
         "silverstripe/framework": "^4.0"
     },
     "scripts": {
-        "phpcbf": "phpcbf code/ tests/",
-        "phpcs": "phpcs code/ tests/"
+        "phpcbf": "phpcbf src/ tests/",
+        "phpcs": "phpcs src/ tests/"
     },
     "autoload": {
         "psr-4": {
