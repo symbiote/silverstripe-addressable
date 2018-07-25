@@ -7,278 +7,297 @@
  *
  * @package silverstripe-addressable
  */
-class Addressable extends DataExtension {
+class Addressable extends DataExtension
+{
+    private static $db = array(
+        'Address'  => 'Varchar(255)',
+        'Suburb'   => 'varchar(64)',
+        'State'    => 'Varchar(64)',
+        'Postcode' => 'Varchar(10)',
+        'Country'  => 'Varchar(2)'
+    );
 
-	protected static $allowed_states;
-	protected static $allowed_countries;
-	protected static $postcode_regex = '/^[0-9]+$/';
+    protected static $allowed_states;
+    protected static $allowed_countries;
+    protected static $postcode_regex = '/^[0-9]+$/';
 
-	protected $allowedStates;
-	protected $allowedCountries;
-	protected $postcodeRegex;
+    protected $allowedStates;
+    protected $allowedCountries;
+    protected $postcodeRegex;
 
-	/**
-	 * Sets the default allowed states for new instances.
-	 *
-	 * @param null|string|array $states
-	 * @see   Addressable::setAllowedStates
-	 */
-	public static function set_allowed_states($states) {
-		self::$allowed_states = $states;
-	}
+    public function __construct()
+    {
+        $this->allowedStates    = self::$allowed_states;
+        $this->allowedCountries = self::$allowed_countries;
+        $customRegex = Config::inst()->get('Addressable', 'set_postcode_regex');
+        if (!empty($customRegex)) {
+            self::set_postcode_regex($customRegex);
+        }
+        $this->postcodeRegex    = self::$postcode_regex;
 
-	/**
-	 * Sets the default allowed countries for new instances.
-	 *
-	 * @param null|string|array $countries
-	 * @see   Addressable::setAllowedCountries
-	 */
-	public static function set_allowed_countries($countries) {
-		self::$allowed_countries = $countries;
-	}
+        parent::__construct();
+    }
 
-	/**
-	 * get the allowed states for this object
-	 *
-	 * @return array
-	 */
-	public function getAllowedStates() {
-		return $this->allowedStates;
-	}
+    public function updateCMSFields(FieldList $fields)
+    {
+        if ($fields->hasTabSet()) {
+            $fields->addFieldsToTab('Root.Address', $this->getAddressFields());
+        } else {
+            $newFields = $this->getAddressFields();
+            foreach ($newFields as $field) {
+                $fields->push($field);
+            }
+        }
+    }
 
-	/**
-	 * get the allowed countries for this object
-	 *
-	 * @return array
-	 */
-	public function getAllowedCountries() {
-		return $this->allowedCountries;
-	}
+    public function updateFrontEndFields(FieldList $fields)
+    {
+        if (!$fields->dataFieldByName("Address")) {
+            $fields->merge($this->getAddressFields());
+        }
+    }
 
-	/**
-	 * Sets the default postcode regex for new instances.
-	 *
-	 * @param string $regex
-	 */
-	public static function set_postcode_regex($regex) {
-		self::$postcode_regex = $regex;
-	}
+    public function populateDefaults()
+    {
+        if (is_string($this->allowedStates)) {
+            $this->owner->State = $this->allowedStates;
+        }
 
-	public function __construct() {
-		$this->allowedStates    = self::$allowed_states;
-		$this->allowedCountries = self::$allowed_countries;
-		$customRegex = Config::inst()->get('Addressable', 'set_postcode_regex');
-                if (!empty($customRegex)) {
-                    self::set_postcode_regex($customRegex);
-                }
-		$this->postcodeRegex    = self::$postcode_regex;
+        if (is_string($this->allowedCountries)) {
+            $this->owner->Country = $this->allowedCountries;
+        }
+    }
 
-		parent::__construct();
-	}
+    /**
+     * Sets the default allowed states for new instances.
+     *
+     * @param null|string|array $states
+     * @see   Addressable::setAllowedStates
+     */
+    public static function set_allowed_states($states)
+    {
+        self::$allowed_states = $states;
+    }
 
-	private static $db = array(
-		'Address'  => 'Varchar(255)',
-		'Suburb'   => 'varchar(64)',
-		'State'    => 'Varchar(64)',
-		'Postcode' => 'Varchar(10)',
-		'Country'  => 'Varchar(2)'
-	);
+    /**
+     * Sets the default allowed countries for new instances.
+     *
+     * @param null|string|array $countries
+     * @see   Addressable::setAllowedCountries
+     */
+    public static function set_allowed_countries($countries)
+    {
+        self::$allowed_countries = $countries;
+    }
 
+    /**
+     * get the allowed states for this object
+     *
+     * @return array
+     */
+    public function getAllowedStates()
+    {
+        return $this->allowedStates;
+    }
 
-	public function updateCMSFields(FieldList $fields) {
-		if ($fields->hasTabSet()) {
-			$fields->addFieldsToTab('Root.Address', $this->getAddressFields());
-		} else {
-			$newFields = $this->getAddressFields();
-			foreach ($newFields as $field) {
-				$fields->push($field);
-			}
-		}
-	}
+    /**
+     * get the allowed countries for this object
+     *
+     * @return array
+     */
+    public function getAllowedCountries()
+    {
+        return $this->allowedCountries;
+    }
 
-	public function updateFrontEndFields(FieldList $fields) {
-		if(!$fields->dataFieldByName("Address")) {
-			$fields->merge($this->getAddressFields());
-		}
-	}
+    /**
+     * Sets the default postcode regex for new instances.
+     *
+     * @param string $regex
+     */
+    public static function set_postcode_regex($regex)
+    {
+        self::$postcode_regex = $regex;
+    }
 
-	public function populateDefaults() {
-		if (is_string($this->allowedStates)) {
-			$this->owner->State = $this->allowedStates;
-		}
+    /**
+     * @return array
+     */
+    public function getAddressFields($_params = array())
+    {
+        $params = array_merge(
+            array(
+                'includeHeader' => true,
+            ),
+            (array) $_params
+        );
 
-		if (is_string($this->allowedCountries)) {
-			$this->owner->Country = $this->allowedCountries;
-		}
-	}
+        $fields = array(
+            new TextField('Address', _t('Addressable.ADDRESS', 'Address')),
+            new TextField('Suburb', _t('Addressable.SUBURB', 'Suburb'))
+        );
 
-	/**
-	 * @return array
-	 */
-	public function getAddressFields($_params = array()) {
-		$params = array_merge(
-			array(
-				'includeHeader' => true,
-			),
-			(array) $_params
-		);
+        if ($params['includeHeader']) {
+            array_unshift(
+                $fields,
+                new HeaderField('AddressHeader', _t('Addressable.ADDRESSHEADER', 'Address'))
+            );
+        }
 
-		$fields = array(
-			new TextField('Address', _t('Addressable.ADDRESS', 'Address')),
-			new TextField('Suburb', _t('Addressable.SUBURB', 'Suburb'))
-		);
+        $label = _t('Addressable.STATE', 'State');
+        if (is_array($this->allowedStates)) {
+            $fields[] = new DropdownField('State', $label, $this->allowedStates);
+        } elseif (!is_string($this->allowedStates)) {
+            $fields[] = new TextField('State', $label);
+        }
 
-		if($params['includeHeader']) {
-			array_unshift(
-				$fields,
-				new HeaderField('AddressHeader', _t('Addressable.ADDRESSHEADER', 'Address'))
-			);
-		}
+        $postcode = new RegexTextField('Postcode', _t('Addressable.POSTCODE', 'Postcode'));
+        $postcode->setRegex($this->postcodeRegex);
+        $fields[] = $postcode;
 
-		$label = _t('Addressable.STATE', 'State');
-		if (is_array($this->allowedStates)) {
-			$fields[] = new DropdownField('State', $label, $this->allowedStates);
-		} elseif (!is_string($this->allowedStates)) {
-			$fields[] = new TextField('State', $label);
-		}
+        $label = _t('Addressable.COUNTRY', 'Country');
+        if (is_array($this->allowedCountries)) {
+            $fields[] = new DropdownField('Country', $label, $this->allowedCountries);
+        } elseif (!is_string($this->allowedCountries)) {
+            $fields[] = new CountryDropdownField('Country', $label);
+        }
+        $this->owner->extend("updateAddressFields", $fields);
 
-		$postcode = new RegexTextField('Postcode', _t('Addressable.POSTCODE', 'Postcode'));
-		$postcode->setRegex($this->postcodeRegex);
-		$fields[] = $postcode;
+        return $fields;
+    }
 
-		$label = _t('Addressable.COUNTRY', 'Country');
-		if (is_array($this->allowedCountries)) {
-			$fields[] = new DropdownField('Country', $label, $this->allowedCountries);
-		} elseif (!is_string($this->allowedCountries)) {
-			$fields[] = new CountryDropdownField('Country', $label);
-		}
-		$this->owner->extend("updateAddressFields", $fields);
+    /**
+     * @return bool
+     */
+    public function hasAddress()
+    {
+        return (
+            $this->owner->Address
+            && $this->owner->Suburb
+            && $this->owner->State
+            && $this->owner->Postcode
+            && $this->owner->Country
+        );
+    }
 
-		return $fields;
-	}
+    /**
+     * Returns the full address as a simple string.
+     *
+     * @return string
+     */
+    public function getFullAddress()
+    {
+        $parts = array(
+            $this->owner->Address,
+            $this->owner->Suburb,
+            $this->owner->State,
+            $this->owner->Postcode,
+            $this->owner->getCountryName()
+        );
 
-	/**
-	 * @return bool
-	 */
-	public function hasAddress() {
-		return (
-			$this->owner->Address
-			&& $this->owner->Suburb
-			&& $this->owner->State
-			&& $this->owner->Postcode
-			&& $this->owner->Country
-		);
-	}
+        return implode(', ', array_filter($parts));
+    }
 
-	/**
-	 * Returns the full address as a simple string.
-	 *
-	 * @return string
-	 */
-	public function getFullAddress() {
-		$parts = array(
-			$this->owner->Address,
-			$this->owner->Suburb,
-			$this->owner->State,
-			$this->owner->Postcode,
-			$this->owner->getCountryName()
-		);
+    /**
+     * Returns the full address in a simple HTML template.
+     *
+     * @return string
+     */
+    public function getFullAddressHTML()
+    {
+        return $this->owner->renderWith('Address');
+    }
 
-		return implode(', ', array_filter($parts));
-	}
+    /**
+     * Returns a static google map of the address, linking out to the address.
+     *
+     * @param int $width (optional)
+     * @param int $height (optional)
+     * @param int $scale (optional)
+     * @return string
+     */
+    public function AddressMap($width = 320, $height = 240, $scale = 1)
+    {
+        $data = $this->owner->customise(array(
+            'Width'    => $width,
+            'Height'   => $height,
+            'Scale'    => $scale,
+            'Address'  => rawurlencode($this->getFullAddress()),
+            'Key'      => Config::inst()->get('GoogleGeocoding', 'google_api_key')
+        ));
+        return $data->renderWith('AddressMap');
+    }
 
-	/**
-	 * Returns the full address in a simple HTML template.
-	 *
-	 * @return string
-	 */
-	public function getFullAddressHTML() {
-		return $this->owner->renderWith('Address');
-	}
+    /**
+     * Returns the country name (not the 2 character code).
+     *
+     * @return string
+     */
+    public function getCountryName()
+    {
+        return Zend_Locale::getTranslation($this->owner->Country, 'territory', i18n::get_locale());
+    }
 
-	/**
-	 * Returns a static google map of the address, linking out to the address.
-	 *
-	 * @param int $width (optional)
-	 * @param int $height (optional)
-	 * @param int $scale (optional)
-	 * @return string
-	 */
-	public function AddressMap($width = 320, $height = 240, $scale = 1) {
-		$data = $this->owner->customise(array(
-			'Width'    => $width,
-			'Height'   => $height,
-			'Scale'    => $scale,
-			'Address'  => rawurlencode($this->getFullAddress()),
-			'Key'      => Config::inst()->get('GoogleGeocoding', 'google_api_key')
-		));
-		return $data->renderWith('AddressMap');
-	}
+    /**
+     * Returns TRUE if any of the address fields have changed.
+     *
+     * @param int $level
+     * @return bool
+     */
+    public function isAddressChanged($level = 1)
+    {
+        $fields  = array('Address', 'Suburb', 'State', 'Postcode', 'Country');
+        $changed = $this->owner->getChangedFields(false, $level);
 
-	/**
-	 * Returns the country name (not the 2 character code).
-	 *
-	 * @return string
-	 */
-	public function getCountryName() {
-		return Zend_Locale::getTranslation($this->owner->Country, 'territory',  i18n::get_locale());
-	}
+        foreach ($fields as $field) {
+            if (array_key_exists($field, $changed)) {
+                return true;
+            }
+        }
 
-	/**
-	 * Returns TRUE if any of the address fields have changed.
-	 *
-	 * @param int $level
-	 * @return bool
-	 */
-	public function isAddressChanged($level = 1) {
-		$fields  = array('Address', 'Suburb', 'State', 'Postcode', 'Country');
-		$changed = $this->owner->getChangedFields(false, $level);
+        return false;
+    }
 
-		foreach ($fields as $field) {
-			if (array_key_exists($field, $changed)) return true;
-		}
+    /**
+     * Sets the states that a user can select. By default they can input any
+     * state into a text field, but if you set an array it will be replaced with
+     * a dropdown field.
+     *
+     * @param array $states
+     */
+    public function setAllowedStates($states)
+    {
+        $this->allowedStates = $states;
+    }
 
-		return false;
-	}
+    /**
+     * Sets the countries that a user can select. There are three possible
+     * values:
+     *
+     * <ul>
+     *   <li>null: Present a text box to the user.</li>
+     *   <li>string: Set the country to the two letter country code passed, and
+     *       do not allow users to select a country.</li>
+     *   <li>array: Allow users to select from the list of passed countries.</li>
+     * </ul>
+     *
+     * @param null|string|array $states
+     */
+    public function setAllowedCountries($countries)
+    {
+        $this->allowedCountries = $countries;
+    }
 
-	/**
-	 * Sets the states that a user can select. By default they can input any
-	 * state into a text field, but if you set an array it will be replaced with
-	 * a dropdown field.
-	 *
-	 * @param array $states
-	 */
-	public function setAllowedStates($states) {
-		$this->allowedStates = $states;
-	}
-
-	/**
-	 * Sets the countries that a user can select. There are three possible
-	 * values:
-	 *
-	 * <ul>
-	 *   <li>null: Present a text box to the user.</li>
-	 *   <li>string: Set the country to the two letter country code passed, and
-	 *       do not allow users to select a country.</li>
-	 *   <li>array: Allow users to select from the list of passed countries.</li>
-	 * </ul>
-	 *
-	 * @param null|string|array $states
-	 */
-	public function setAllowedCountries($countries) {
-		$this->allowedCountries = $countries;
-	}
-
-	/**
-	 * Sets a regex that an entered postcode must match to be accepted. This can
-	 * be set to NULL to disable postcode validation and allow any value.
-	 *
-	 * The postcode regex defaults to only accepting numerical postcodes.
-	 *
-	 * @param string $regex
-	 */
-	public function setPostcodeRegex($regex) {
-		$this->postcodeRegex = $regex;
-	}
-
+    /**
+     * Sets a regex that an entered postcode must match to be accepted. This can
+     * be set to NULL to disable postcode validation and allow any value.
+     *
+     * The postcode regex defaults to only accepting numerical postcodes.
+     *
+     * @param string $regex
+     */
+    public function setPostcodeRegex($regex)
+    {
+        $this->postcodeRegex = $regex;
+    }
 }

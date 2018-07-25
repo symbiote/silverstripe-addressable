@@ -18,12 +18,18 @@ class Geocodable extends DataExtension
     public function onBeforeWrite()
     {
         if (!Config::inst()->get('Geocodable', 'is_geocodable')) {
+            // Allow user-code to disable Geocodable. This was added
+            // so that dev/tasks that write a *lot* of Geocodable records can
+            // ignore this expensive logic.
             return;
         }
         if ($this->owner->LatLngOverride) {
+            // A CMS user disabled automatical retrieval of Lat/Lng
+            // and most likely input their own values.
             return;
         }
-        if (!$this->owner->hasMethod('isAddressChanged') || !$this->owner->isAddressChanged()) {
+        if (!$this->owner->hasMethod('isAddressChanged') ||
+            !$this->owner->isAddressChanged()) {
             return;
         }
 
@@ -31,8 +37,7 @@ class Geocodable extends DataExtension
         $region = strtolower($this->owner->Country);
 
         $point = GoogleGeocoding::address_to_point($address, $region);
-        if (!$point)
-        {
+        if (!$point) {
             return;
         }
 
@@ -63,7 +68,7 @@ class Geocodable extends DataExtension
         if ($this->owner->hasExtension('Addressable')) {
             // If using addressable, put the fields with it
             $fields->addFieldToTab('Root.Address', ToggleCompositeField::create('Coordinates', 'Coordinates', $compositeField));
-        } else if ($this->owner instanceof SiteTree) {
+        } elseif ($this->owner instanceof SiteTree) {
             // If SIteTree but not using Addressable, put after 'Metadata' toggle composite field
             $fields->insertAfter($compositeField, 'ExtraMeta');
         } else {
@@ -75,5 +80,4 @@ class Geocodable extends DataExtension
     {
         $fields->removeByName(array('LatLngOverride', 'Lat', 'Lng'));
     }
-
 }
