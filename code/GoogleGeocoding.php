@@ -33,7 +33,16 @@ class GoogleGeocoding
             if (Director::isDev()) {
                 throw new Exception($errorMessage);
             } else {
-                user_error($errorMessage);
+                user_error($errorMessage, E_USER_WARNING);
+            }
+            return false;
+        }
+        if ($service->request()->getStatusCode() !== 200) {
+            $errorMessage = $service->request()->getBody();
+            if (Director::isDev()) {
+                throw new Exception($errorMessage);
+            } else {
+                user_error($errorMessage, E_USER_WARNING);
             }
             return false;
         }
