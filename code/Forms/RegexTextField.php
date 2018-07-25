@@ -1,6 +1,6 @@
 <?php
 
-namespace Symbiote\Addressable;
+namespace Symbiote\Addressable\Forms;
 
 use SilverStripe\Forms\TextField;
 
