@@ -22,10 +22,9 @@ class GeocodableTest extends SapphireTest
             'lat' => -41.2928922,
             'lng' => 174.7789792,
         ];
-        $result = GeocodableDataObjectTest::get()->byID($record->ID);
         $this->assertEquals(
             $expected,
-            ['lat' => $result->Lat, 'lng' => $result->Lng]
+            ['lat' => $record->Lat, 'lng' => $record->Lng]
         );
     }
 
@@ -48,10 +47,9 @@ class GeocodableTest extends SapphireTest
             'lat' => 0,
             'lng' => 0,
         ];
-        $result = GeocodableDataObjectTest::get()->byID($record->ID);
         $this->assertEquals(
             $expected,
-            ['lat' => $result->Lat, 'lng' => $result->Lng]
+            ['lat' => $record->Lat, 'lng' => $record->Lng]
         );
     }
 
