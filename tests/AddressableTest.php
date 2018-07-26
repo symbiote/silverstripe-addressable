@@ -2,7 +2,10 @@
 
 namespace Symbiote\Addressable\Tests;
 
+use Symbiote\Addressable\Addressable;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
+use SilverStripe\i18n\Data\Intl\IntlLocales;
 
 class AddressableTest extends SapphireTest
 {
@@ -45,5 +48,111 @@ class AddressableTest extends SapphireTest
         $this->assertTrue($addressable2->State == 'WI');
         $this->assertTrue($addressable2->Postcode == '53081');
         $this->assertTrue($addressable2->Country == 'US');
+    }
+
+    public function testConfigureNoCountry()
+    {
+        $record = new AddressableDataObjectTest();
+
+        // Test that nothing is populated by default
+        // (we only populate if 1 item is defined in the list)
+        $this->assertEquals(
+            '',
+            $record->Country
+        );
+
+        // Test that with nothing configured, it gets all countries
+        $this->assertEquals(
+            IntlLocales::singleton()->config()->get('countries'),
+            $record->getAllowedCountries()
+        );
+    }
+
+    public function testConfigureOneCountryGlobally()
+    {
+        Config::inst()->update(Addressable::class, 'allowed_countries', [
+            'au' => 'Australia',
+        ]);
+        $record = new AddressableDataObjectTest();
+
+        // Test that populateDefaults() is working
+        $this->assertEquals(
+            'au',
+            $record->Country
+        );
+
+        // Test that we only get one country back in array
+        $this->assertEquals(
+            [
+                'au' => 'Australia',
+            ],
+            $record->getAllowedCountries()
+        );
+    }
+
+    public function testConfigureOneCountryOnExtendable()
+    {
+        Config::inst()->update(AddressableDataObjectTest::class, 'allowed_countries', [
+            'nz' => 'New Zealand',
+        ]);
+        $record = new AddressableDataObjectTest();
+
+        // Test that populateDefaults() is working
+        $this->assertEquals(
+            'nz',
+            $record->Country
+        );
+
+        // Test that we only get both countre back in array
+        $this->assertEquals(
+            [
+            'nz' => 'New Zealand',
+            ],
+            $record->getAllowedCountries()
+        );
+    }
+
+    public function testConfigureOneStateGlobally()
+    {
+        Config::inst()->update(Addressable::class, 'allowed_states', [
+            'vic' => 'Victoria',
+        ]);
+        $record = new AddressableDataObjectTest();
+
+        // Test that populateDefaults() is working
+        $this->assertEquals(
+            'vic',
+            $record->State
+        );
+
+        // Test that we only get one country back in array
+        $this->assertEquals(
+            [
+                'vic' => 'Victoria',
+            ],
+            $record->getAllowedStates()
+        );
+    }
+
+    public function testConfigureOneStateOnExtendable()
+    {
+        Config::inst()->update(AddressableDataObjectTest::class, 'allowed_states', [
+            'nsw' => 'New South Wales',
+        ]);
+        $record = new AddressableDataObjectTest();
+
+        // Test that populateDefaults() is working
+        $this->assertEquals(
+            'nsw',
+            $record->State
+        );
+
+        // Test that we only get one country back in array
+        $this->assertEquals(
+            [
+                'nsw' => 'New South Wales',
+            ],
+            $record->getAllowedStates()
+        );
     }
 }

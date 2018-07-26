@@ -11,6 +11,8 @@ use SilverStripe\i18n\Data\Intl\IntlLocales;
 use SilverStripe\ORM\DataExtension;
 use Symbiote\Addressable\Forms\RegexTextField;
 use Dynamic\CountryDropdownField\Fields\CountryDropdownField;
+use SilverStripe\ORM\FieldType\DBHTMLText;
+use Exception;
 
 /**
  * Adds simple address fields to an object, as well as fields to manage them.
@@ -30,25 +32,40 @@ class Addressable extends DataExtension
         'Country'  => 'Varchar(2)'
     );
 
-    protected static $allowed_states;
-    protected static $allowed_countries;
-    protected static $postcode_regex = '/^[0-9]+$/';
+    /**
+     * Define an array of states that the user can select from.
+     * If no states are defined, a user can type in any plain text for their state.
+     * If only 1 state is defined, that will be the default populated value.
+     *
+     * @var array
+     * @config
+     */
+    private static $allowed_states = [];
 
-    protected $allowedStates;
-    protected $allowedCountries;
-    protected $postcodeRegex;
+    /**
+     * Define an array of countries that the user can select from.
+     * If only 1 country is defined, that will be the default populated value.
+     *
+     * @var array
+     * @config
+     */
+    private static $allowed_countries = [];
+
+    /**
+     * @var string
+     * @config
+     */
+    private static $postcode_regex = '/^[0-9]+$/';
 
     public function __construct()
     {
-        $this->allowedStates    = self::$allowed_states;
-        $this->allowedCountries = self::$allowed_countries;
-        $customRegex = Config::inst()->get('Addressable', 'set_postcode_regex');
-        if (!empty($customRegex)) {
-            self::set_postcode_regex($customRegex);
-        }
-        $this->postcodeRegex    = self::$postcode_regex;
-
         parent::__construct();
+
+        // Throw exception for deprecated config
+        if (Config::inst()->get('Addressable', 'set_postcode_regex') ||
+            Config::inst()->get(__CLASS__, 'set_postcode_regex')) {
+            throw new Exception('Addressable config "set_postcode_regex" is deprecated in favour of using YML config "postcode_regex"');
+        }
     }
 
     public function updateCMSFields(FieldList $fields)
@@ -72,45 +89,41 @@ class Addressable extends DataExtension
 
     public function populateDefaults()
     {
-        if (is_string($this->allowedStates)) {
-            $this->owner->State = $this->allowedStates;
+        $allowedStates = $this->getAllowedStates();
+        if (is_array($allowedStates) &&
+            count($allowedStates) === 1) {
+            reset($allowedStates);
+            $this->owner->State = key($allowedStates);
         }
 
-        if (is_string($this->allowedCountries)) {
-            $this->owner->Country = $this->allowedCountries;
+        $allowedCountries = $this->getAllowedCountries();
+        if (is_array($allowedCountries) &&
+            count($allowedCountries) === 1) {
+            reset($allowedCountries);
+            $this->owner->Country = key($allowedCountries);
         }
     }
 
     /**
-     * Sets the default allowed states for new instances.
-     *
-     * @param null|string|array $states
-     * @see   Addressable::setAllowedStates
-     */
-    public static function set_allowed_states($states)
-    {
-        self::$allowed_states = $states;
-    }
-
-    /**
-     * Sets the default allowed countries for new instances.
-     *
-     * @param null|string|array $countries
-     * @see   Addressable::setAllowedCountries
-     */
-    public static function set_allowed_countries($countries)
-    {
-        self::$allowed_countries = $countries;
-    }
-
-    /**
-     * get the allowed states for this object
+     * Get the allowed states for this object
      *
      * @return array
      */
     public function getAllowedStates()
     {
-        return $this->allowedStates;
+        // Get states from extending object. (ie. Page, DataObject)
+        $allowedCountries = $this->owner->config()->allowed_states;
+        if ($allowedCountries) {
+            return $allowedCountries;
+        }
+
+        // Get allowed states global. If there are no specific rules on a Page/DataObject
+        // fallback to what is configured on this extension
+        $allowedCountries = Config::inst()->get(__CLASS__, 'allowed_states');
+        if ($allowedCountries) {
+            return $allowedCountries;
+        }
+        return [];
     }
 
     /**
@@ -120,66 +133,21 @@ class Addressable extends DataExtension
      */
     public function getAllowedCountries()
     {
-        return $this->allowedCountries;
-    }
-
-    /**
-     * Sets the default postcode regex for new instances.
-     *
-     * @param string $regex
-     */
-    public static function set_postcode_regex($regex)
-    {
-        self::$postcode_regex = $regex;
-    }
-
-    /**
-     * @return array
-     */
-    public function getAddressFields($_params = array())
-    {
-        $params = array_merge(
-            array(
-                'includeHeader' => true,
-            ),
-            (array) $_params
-        );
-
-        $fields = array(
-            new TextField('Address', _t('Addressable.ADDRESS', 'Address')),
-            new TextField('Suburb', _t('Addressable.SUBURB', 'Suburb'))
-        );
-
-        if ($params['includeHeader']) {
-            array_unshift(
-                $fields,
-                new HeaderField('AddressHeader', _t('Addressable.ADDRESSHEADER', 'Address'))
-            );
+        // Get allowed_countries from extending object. (ie. Page, DataObject)
+        $allowedCountries = $this->owner->config()->allowed_countries;
+        if ($allowedCountries) {
+            return $allowedCountries;
         }
 
-        $label = _t('Addressable.STATE', 'State');
-        if (is_array($this->allowedStates)) {
-            $fields[] = new DropdownField('State', $label, $this->allowedStates);
-        } elseif (!is_string($this->allowedStates)) {
-            $fields[] = new TextField('State', $label);
+        // Get allowed countries global. If there are no specific rules on a Page/DataObject
+        // fallback to what is configured on this extension
+        $allowedCountries = Config::inst()->get(__CLASS__, 'allowed_countries');
+        if ($allowedCountries) {
+            return $allowedCountries;
         }
 
-        $postcode = RegexTextField::create('Postcode', _t('Addressable.POSTCODE', 'Postcode'));
-        $postcode->setRegex($this->postcodeRegex);
-        $fields[] = $postcode;
-
-        $countriesList = $this->allowedCountries;
-        if (!$countriesList) {
-            $countriesList = IntlLocales::singleton()->config()->get('countries');
-        }
-        $fields[] = DropdownField::create(
-            'Country',
-            _t('Addressable.COUNTRY', 'Country'),
-            $countriesList
-        );
-        $this->owner->extend("updateAddressFields", $fields);
-
-        return $fields;
+        // Finally, fallback to a full list of countries
+        return IntlLocales::singleton()->config()->get('countries');
     }
 
     /**
@@ -217,11 +185,11 @@ class Addressable extends DataExtension
     /**
      * Returns the full address in a simple HTML template.
      *
-     * @return string
+     * @return DBHTMLText
      */
     public function getFullAddressHTML()
     {
-        return $this->owner->renderWith('Address');
+        return $this->owner->renderWith('Symbiote/Addressable/Address');
     }
 
     /**
@@ -230,7 +198,7 @@ class Addressable extends DataExtension
      * @param int $width (optional)
      * @param int $height (optional)
      * @param int $scale (optional)
-     * @return string
+     * @return DBHTMLText
      */
     public function AddressMap($width = 320, $height = 240, $scale = 1)
     {
@@ -241,7 +209,7 @@ class Addressable extends DataExtension
             'Address'  => rawurlencode($this->getFullAddress()),
             'Key'      => Config::inst()->get('GoogleGeocoding', 'google_api_key')
         ));
-        return $data->renderWith('AddressMap');
+        return $data->renderWith('Symbiote/Addressable/AddressMap');
     }
 
     /**
@@ -275,45 +243,78 @@ class Addressable extends DataExtension
     }
 
     /**
-     * Sets the states that a user can select. By default they can input any
-     * state into a text field, but if you set an array it will be replaced with
-     * a dropdown field.
+     * NOTE:
      *
-     * @param array $states
+     * This was made private as you should *probably* be using "updateAddressFields" to manipulate
+     * these fields (if at all).
+     *
+     * If this doesn't end up being the case, feel free to make a PR and change this back to "public".
+     *
+     * @return array
      */
-    public function setAllowedStates($states)
+    private function getAddressFields($_params = array())
     {
-        $this->allowedStates = $states;
+        $params = array_merge(
+            array(
+                'includeHeader' => true,
+            ),
+            (array) $_params
+        );
+
+        $fields = array(
+            TextField::create('Address', _t('Addressable.ADDRESS', 'Address')),
+            TextField::create('Suburb', _t('Addressable.SUBURB', 'Suburb'))
+        );
+
+        if ($params['includeHeader']) {
+            array_unshift(
+                $fields,
+                new HeaderField('AddressHeader', _t('Addressable.ADDRESSHEADER', 'Address'))
+            );
+        }
+
+        $allowedStates = $this->getAllowedStates();
+        if (count($allowedStates) >= 1) {
+            // If allowed states are restricted, only allow those
+            $fields[] = DropdownField::create('State', $label, $allowedStates);
+        } else if (!$allowedStates) {
+            // If no allowed states defined, allow the user to type anything
+            $fields[] = TextField::create('State', $label);
+        }
+
+        $postcode = RegexTextField::create('Postcode', _t('Addressable.POSTCODE', 'Postcode'));
+        $postcode->setRegex($this->getPostcodeRegex());
+        $fields[] = $postcode;
+
+        $fields[] = DropdownField::create(
+            'Country',
+            _t('Addressable.COUNTRY', 'Country'),
+            $this->getAllowedCountries()
+        );
+
+        $this->owner->extend("updateAddressFields", $fields);
+
+        return $fields;
     }
 
     /**
-     * Sets the countries that a user can select. There are three possible
-     * values:
-     *
-     * <ul>
-     *   <li>null: Present a text box to the user.</li>
-     *   <li>string: Set the country to the two letter country code passed, and
-     *       do not allow users to select a country.</li>
-     *   <li>array: Allow users to select from the list of passed countries.</li>
-     * </ul>
-     *
-     * @param null|string|array $states
+     * @return string
      */
-    public function setAllowedCountries($countries)
+    private function getPostcodeRegex()
     {
-        $this->allowedCountries = $countries;
-    }
+        // Get postcode regex from extending object. (ie. Page, DataObject)
+        $regex = $this->owner->config()->postcode_regex;
+        if ($regex) {
+            return $regex;
+        }
 
-    /**
-     * Sets a regex that an entered postcode must match to be accepted. This can
-     * be set to NULL to disable postcode validation and allow any value.
-     *
-     * The postcode regex defaults to only accepting numerical postcodes.
-     *
-     * @param string $regex
-     */
-    public function setPostcodeRegex($regex)
-    {
-        $this->postcodeRegex = $regex;
+        // Get postcode  regex global. If there are no specific rules on a Page/DataObject
+        // fallback to what is configured on this extension
+        $regex = Config::inst()->get(__CLASS__, 'postcode_regex');
+        if ($regex) {
+            return $regex;
+        }
+
+        return '';
     }
 }
