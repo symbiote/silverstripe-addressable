@@ -9,8 +9,8 @@ use SilverStripe\Forms\HeaderField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\i18n\i18n;
 use SilverStripe\ORM\DataExtension;
-use RegexTextField;
-use CountryDropdownField;
+use Symbiote\Addressable\Forms\RegexTextField;
+use Dynamic\CountryDropdownField\Fields\CountryDropdownField;
 use Zend_Locale;
 
 /**
@@ -25,7 +25,7 @@ class Addressable extends DataExtension
 {
     private static $db = array(
         'Address'  => 'Varchar(255)',
-        'Suburb'   => 'varchar(64)',
+        'Suburb'   => 'Varchar(64)',
         'State'    => 'Varchar(64)',
         'Postcode' => 'Varchar(10)',
         'Country'  => 'Varchar(2)'
@@ -165,15 +165,16 @@ class Addressable extends DataExtension
             $fields[] = new TextField('State', $label);
         }
 
-        $postcode = new RegexTextField('Postcode', _t('Addressable.POSTCODE', 'Postcode'));
+        $postcode = RegexTextField::create('Postcode', _t('Addressable.POSTCODE', 'Postcode'));
         $postcode->setRegex($this->postcodeRegex);
         $fields[] = $postcode;
 
         $label = _t('Addressable.COUNTRY', 'Country');
-        if (is_array($this->allowedCountries)) {
-            $fields[] = new DropdownField('Country', $label, $this->allowedCountries);
-        } elseif (!is_string($this->allowedCountries)) {
-            $fields[] = new CountryDropdownField('Country', $label);
+        if (class_exists(CountryDropdownField::class) &&
+            !$this->allowedCountries) {
+            $fields[] = CountryDropdownField::create('Country', $label);
+        } else {
+            $fields[] = DropdownField::create('Country', $label, $this->allowedCountries);
         }
         $this->owner->extend("updateAddressFields", $fields);
 

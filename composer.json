@@ -20,7 +20,9 @@
         }
     ],
     "require": {
-        "silverstripe/framework": "^4.0"
+        "php": "^7.0",
+        "silverstripe/framework": "^4.0",
+        "willdurand/geocoder": "^4.0"
     },
     "scripts": {
         "phpcbf": "phpcbf src/ tests/",
@@ -28,11 +30,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Symbiote\\Addressable\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
+            "Symbiote\\Addressable\\": "src/",
             "Symbiote\\Addressable\\Tests\\": "tests/"
         }
     },

@@ -21,6 +21,16 @@ use SilverStripe\ORM\DataExtension;
  */
 class Geocodable extends DataExtension
 {
+    /**
+     * Disable geocoding for onBeforeWrite().
+     *
+     * You may want to do disable this when modifying lots
+     * of data in a dev/task at once.
+     *
+     * @var boolean
+     * @config
+     */
+    private static $is_geocodable = true;
 
     private static $db = array(
         'LatLngOverride' => 'Boolean',
@@ -30,7 +40,7 @@ class Geocodable extends DataExtension
 
     public function onBeforeWrite()
     {
-        if (!Config::inst()->get('Geocodable', 'is_geocodable')) {
+        if (!Config::inst()->get(__CLASS__, 'is_geocodable')) {
             // Allow user-code to disable Geocodable. This was added
             // so that dev/tasks that write a *lot* of Geocodable records can
             // ignore this expensive logic.

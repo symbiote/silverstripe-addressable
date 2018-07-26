@@ -12,8 +12,19 @@ use Exception;
  *
  * @package silverstripe-addressable
  */
-class GoogleGeocoding
+class GeocodeService
 {
+    /**
+     * @var string
+     * @config
+     */
+    private static $google_api_url = 'https://maps.googleapis.com/maps/api/geocode/xml';
+
+    /**
+     * @var string
+     * @config
+     */
+    private static $google_api_key = '';
 
     /**
      * Convert an address into a latitude and longitude.
@@ -25,11 +36,18 @@ class GoogleGeocoding
     public static function address_to_point($address, $region = null)
     {
         // Get the URL for the Google API
-        $url = Config::inst()->get('GoogleGeocoding', 'google_api_url');
-        $key = Config::inst()->get('GoogleGeocoding', 'google_api_key');
+        $url = Config::inst()->get(__CLASS__, 'google_api_url');
+        $key = Config::inst()->get(__CLASS__, 'google_api_key');
+
+
+        $httpClient = new \Http\Adapter\Guzzle6\Client();
+        $provider = new \Geocoder\Provider\GoogleMaps\GoogleMaps($httpClient);
+        $geocoder = new \Geocoder\StatefulGeocoder($provider, 'en');
+
+        $result = $geocoder->geocodeQuery(GeocodeQuery::create('Buckingham Palace, London'));
 
         // Query the Google API
-        $service = new RestfulService($url);
+        /*$service = new RestfulService($url);
         $service->setQueryString(array(
             'address' => $address,
             'sensor'  => 'false',
@@ -59,6 +77,6 @@ class GoogleGeocoding
         return array(
             'lat' => (float) $location->lat,
             'lng' => (float) $location->lng
-        );
+        );*/
     }
 }
