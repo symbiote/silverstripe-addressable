@@ -1,9 +1,5 @@
 mappings:
-  GoogleGeocoding: Symbiote\Addressable\GoogleGeocoding
+  GoogleGeocoding: Symbiote\Addressable\GeocodeService
   Addressable: Symbiote\Addressable\Addressable
   Geocodable: Symbiote\Addressable\Geocodable
-  RegexTextField: Symbiote\Addressable\RegexTextField
-  GeocodableTest: Symbiote\Addressable\Tests\GeocodableTest
-  AddressableDataObjectTest: Symbiote\Addressable\Tests\AddressableDataObjectTest
-  GeocodableDataObjectTest: Symbiote\Addressable\Tests\GeocodableDataObjectTest
-  AddressableTest: Symbiote\Addressable\Tests\AddressableTest
+  RegexTextField: Symbiote\Addressable\Forms\RegexTextField

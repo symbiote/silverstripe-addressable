@@ -89,65 +89,19 @@ class Addressable extends DataExtension
 
     public function populateDefaults()
     {
-        $allowedStates = $this->getAllowedStates();
+        $allowedStates = $this->owner->getAllowedStates();
         if (is_array($allowedStates) &&
             count($allowedStates) === 1) {
             reset($allowedStates);
             $this->owner->State = key($allowedStates);
         }
 
-        $allowedCountries = $this->getAllowedCountries();
+        $allowedCountries = $this->owner->getAllowedCountries();
         if (is_array($allowedCountries) &&
             count($allowedCountries) === 1) {
             reset($allowedCountries);
             $this->owner->Country = key($allowedCountries);
         }
-    }
-
-    /**
-     * Get the allowed states for this object
-     *
-     * @return array
-     */
-    public function getAllowedStates()
-    {
-        // Get states from extending object. (ie. Page, DataObject)
-        $allowedCountries = $this->owner->config()->allowed_states;
-        if ($allowedCountries) {
-            return $allowedCountries;
-        }
-
-        // Get allowed states global. If there are no specific rules on a Page/DataObject
-        // fallback to what is configured on this extension
-        $allowedCountries = Config::inst()->get(__CLASS__, 'allowed_states');
-        if ($allowedCountries) {
-            return $allowedCountries;
-        }
-        return [];
-    }
-
-    /**
-     * get the allowed countries for this object
-     *
-     * @return array
-     */
-    public function getAllowedCountries()
-    {
-        // Get allowed_countries from extending object. (ie. Page, DataObject)
-        $allowedCountries = $this->owner->config()->allowed_countries;
-        if ($allowedCountries) {
-            return $allowedCountries;
-        }
-
-        // Get allowed countries global. If there are no specific rules on a Page/DataObject
-        // fallback to what is configured on this extension
-        $allowedCountries = Config::inst()->get(__CLASS__, 'allowed_countries');
-        if ($allowedCountries) {
-            return $allowedCountries;
-        }
-
-        // Finally, fallback to a full list of countries
-        return IntlLocales::singleton()->config()->get('countries');
     }
 
     /**
@@ -269,11 +223,14 @@ class Addressable extends DataExtension
         if ($params['includeHeader']) {
             array_unshift(
                 $fields,
-                new HeaderField('AddressHeader', _t('Addressable.ADDRESSHEADER', 'Address'))
+                HeaderField::create('AddressHeader', _t('Addressable.ADDRESSHEADER', 'Address'))
             );
         }
 
-        $allowedStates = $this->getAllowedStates();
+
+        // Get state field
+        $label = _t('Addressable.STATE', 'State');
+        $allowedStates = $this->owner->getAllowedStates();
         if (count($allowedStates) >= 1) {
             // If allowed states are restricted, only allow those
             $fields[] = DropdownField::create('State', $label, $allowedStates);
@@ -282,19 +239,67 @@ class Addressable extends DataExtension
             $fields[] = TextField::create('State', $label);
         }
 
+        // Get postcode field
         $postcode = RegexTextField::create('Postcode', _t('Addressable.POSTCODE', 'Postcode'));
         $postcode->setRegex($this->getPostcodeRegex());
         $fields[] = $postcode;
 
+        // Get country field
         $fields[] = DropdownField::create(
             'Country',
             _t('Addressable.COUNTRY', 'Country'),
-            $this->getAllowedCountries()
+            $this->owner->getAllowedCountries()
         );
 
         $this->owner->extend("updateAddressFields", $fields);
 
         return $fields;
+    }
+
+    /**
+     * Get the allowed states for this object
+     *
+     * @return array
+     */
+    public function getAllowedStates()
+    {
+        // Get states from extending object. (ie. Page, DataObject)
+        $allowedStates = $this->owner->config()->allowed_states;
+        if (is_array($allowedStates)) {
+            return $allowedStates;
+        }
+
+        // Get allowed states global. If there are no specific rules on a Page/DataObject
+        // fallback to what is configured on this extension
+        $allowedStates = Config::inst()->get(__CLASS__, 'allowed_states');
+        if (is_array($allowedStates)) {
+            return $allowedStates;
+        }
+        return [];
+    }
+
+    /**
+     * get the allowed countries for this object
+     *
+     * @return array
+     */
+    public function getAllowedCountries()
+    {
+        // Get allowed_countries from extending object. (ie. Page, DataObject)
+        $allowedCountries = $this->owner->config()->allowed_countries;
+        if (is_array($allowedCountries)) {
+            return $allowedCountries;
+        }
+
+        // Get allowed countries global. If there are no specific rules on a Page/DataObject
+        // fallback to what is configured on this extension
+        $allowedCountries = Config::inst()->get(__CLASS__, 'allowed_countries');
+        if (is_array($allowedCountries)) {
+            return $allowedCountries;
+        }
+
+        // Finally, fallback to a full list of countries
+        return IntlLocales::singleton()->config()->get('countries');
     }
 
     /**
