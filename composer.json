@@ -28,7 +28,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Symbiote\\Addressable\\": "src/",
+            "Symbiote\\Addressable\\": "src/"
         }
     },
     "autoload-dev": {
