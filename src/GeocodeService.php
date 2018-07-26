@@ -4,7 +4,7 @@ namespace Symbiote\Addressable;
 
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\Director;
-use RestfulService;
+use SimpleXMLElement;
 use Exception;
 
 /**
@@ -14,6 +14,10 @@ use Exception;
  */
 class GeocodeService
 {
+    const ERROR_ZERO_RESULTS = 'ZERO_RESULTS';
+
+    const ERROR_OVER_QUERY_LIMIT = 'OVER_QUERY_LIMIT';
+
     /**
      * @var string
      * @config
@@ -33,50 +37,59 @@ class GeocodeService
      * @param string $region  An optional two letter region code.
      * @return array An associative array with lat and lng keys.
      */
-    public static function address_to_point($address, $region = null)
+    public function addressToPoint($address, $region = '')
     {
         // Get the URL for the Google API
         $url = Config::inst()->get(__CLASS__, 'google_api_url');
         $key = Config::inst()->get(__CLASS__, 'google_api_key');
 
+        if (!$url) {
+            // If no URL configured. Stop.
+            throw new GeocodeServiceException('No google_api_url configured. This is not allowed.');
+        }
 
-        $httpClient = new \Http\Adapter\Guzzle6\Client();
-        $provider = new \Geocoder\Provider\GoogleMaps\GoogleMaps($httpClient);
-        $geocoder = new \Geocoder\StatefulGeocoder($provider, 'en');
-
-        $result = $geocoder->geocodeQuery(GeocodeQuery::create('Buckingham Palace, London'));
-
-        // Query the Google API
-        /*$service = new RestfulService($url);
-        $service->setQueryString(array(
+        // Add params
+        $queryVars = [
             'address' => $address,
             'sensor'  => 'false',
-            'region'  => $region,
-            'key'       => $key
-        ));
-        if ($service->request()->getStatusCode() === 500) {
-            $errorMessage = '500 status code, Are you sure your SSL certificates are properly setup? You can workaround this locally by setting CURLOPT_SSL_VERIFYPEER to "false", however this is not recommended for security reasons.';
-            if (Director::isDev()) {
-                throw new Exception($errorMessage);
-            } else {
-                user_error($errorMessage, E_USER_WARNING);
+        ];
+        if ($region) {
+            $queryVars['region'] = $region;
+        }
+        if ($key) {
+            $queryVars['key'] = $key;
+        }
+        $url .= '?'.http_build_query($queryVars);
+
+        $client = new \GuzzleHttp\Client();
+        $response = $client->get($url);
+        if (!$response) {
+            throw new GeocodeServiceException('No response.', 0, '');
+        }
+        $statusCode = $response->getStatusCode();
+        if ($statusCode !== 200) {
+            throw new GeocodeServiceException('Unexpected status code:'.$statusCode, $statusCode, '');
+        }
+        $responseBody = (string)$response->getBody();
+        $xml = new SimpleXMLElement($responseBody);
+        if (!isset($xml->result)) {
+            // Error handling
+            if (isset($xml->status)) {
+                $status = (string)$xml->status;
+                if ($status === self::ERROR_ZERO_RESULTS) {
+                    throw new GeocodeServiceException('Zero results returned. Invalid status from response: '.$status, $statusCode, $responseBody);
+                } else {
+                    throw new GeocodeServiceException('Unhandled status from response: '.$status, $statusCode, $responseBody);
+                }
             }
-            return false;
+            // Fallback to full string dump
+            $text = trim($response->getBody());
+            throw new GeocodeServiceException('Invalid response: '.$text, $responseBody);
         }
-        if (!$service->request()->getBody()) {
-            // If blank response, ignore to avoid XML parsing errors.
-            return false;
-        }
-        $response = $service->request()->simpleXML();
-
-        if ($response->status != 'OK') {
-            return false;
-        }
-
-        $location = $response->result->geometry->location;
-        return array(
-            'lat' => (float) $location->lat,
-            'lng' => (float) $location->lng
-        );*/
+        $location = $xml->result->geometry->location;
+        return [
+            'lat' => (float)$location->lat,
+            'lng' => (float)$location->lng
+        ];
     }
 }

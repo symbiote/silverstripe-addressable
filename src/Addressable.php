@@ -7,11 +7,10 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\HeaderField;
 use SilverStripe\Forms\DropdownField;
-use SilverStripe\i18n\i18n;
+use SilverStripe\i18n\Data\Intl\IntlLocales;
 use SilverStripe\ORM\DataExtension;
 use Symbiote\Addressable\Forms\RegexTextField;
 use Dynamic\CountryDropdownField\Fields\CountryDropdownField;
-use Zend_Locale;
 
 /**
  * Adds simple address fields to an object, as well as fields to manage them.
@@ -169,13 +168,15 @@ class Addressable extends DataExtension
         $postcode->setRegex($this->postcodeRegex);
         $fields[] = $postcode;
 
-        $label = _t('Addressable.COUNTRY', 'Country');
-        if (class_exists(CountryDropdownField::class) &&
-            !$this->allowedCountries) {
-            $fields[] = CountryDropdownField::create('Country', $label);
-        } else {
-            $fields[] = DropdownField::create('Country', $label, $this->allowedCountries);
+        $countriesList = $this->allowedCountries;
+        if (!$countriesList) {
+            $countriesList = IntlLocales::singleton()->config()->get('countries');
         }
+        $fields[] = DropdownField::create(
+            'Country',
+            _t('Addressable.COUNTRY', 'Country'),
+            $countriesList
+        );
         $this->owner->extend("updateAddressFields", $fields);
 
         return $fields;
@@ -250,7 +251,7 @@ class Addressable extends DataExtension
      */
     public function getCountryName()
     {
-        return Zend_Locale::getTranslation($this->owner->Country, 'territory', i18n::get_locale());
+        return IntlLocales::singleton()->countryName($this->owner->Country);
     }
 
     /**

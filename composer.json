@@ -20,9 +20,7 @@
         }
     ],
     "require": {
-        "php": "^7.0",
-        "silverstripe/framework": "^4.0",
-        "willdurand/geocoder": "^4.0"
+        "silverstripe/framework": "^4.0"
     },
     "scripts": {
         "phpcbf": "phpcbf src/ tests/",
