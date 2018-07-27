@@ -35,5 +35,7 @@
     "replace": {
         "ajshort/silverstripe-addressable": "self.version",
         "silverstripe-australia/addressable": "self.version"
-    }
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev"
 }
