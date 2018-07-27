@@ -1,5 +1,12 @@
 <?php
 
+namespace Symbiote\Addressable\Tests;
+
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Dev\SapphireTest;
+use Symbiote\Addressable\Geocodable;
+use Symbiote\Addressable\GeocodeService;
+
 class GeocodableTest extends SapphireTest
 {
     protected static $use_draft_site = true;
@@ -23,18 +30,11 @@ class GeocodableTest extends SapphireTest
             'lng' => 174.7789792,
         ];
 
-        // NOTE(Jake): 2018-07-25
-        //
-        // Ideally we would be able to determine a failure from GoogleGeocoding
-        // rather than assuming a 0,0 == failure.
-        //
-        // This was implemented as sometimes tests would fail in TravisCI, so I'd
-        // rather them be skipped.
-        //
-        if ($record->Lat == 0 &&
-            $record->Lng == 0) {
+        $e = $record->getLastGeocodableException();
+        if ($e &&
+            $e->getStatus() === GeocodeService::ERROR_OVER_QUERY_LIMIT) {
             $this->markTestSkipped(
-                'Skipping '. get_class($this).'::'.__FUNCTION__.'() due to Google endpoint seemingly not being reachable.'
+                'Skipping '. get_class($this).'::'.__FUNCTION__.'() due to being over quota limit. Exception: '.$e->getMessage()
             );
             $this->skipTest = true;
             return;
@@ -47,12 +47,40 @@ class GeocodableTest extends SapphireTest
     }
 
     /**
+     * Get the last geocodable error
+     */
+    public function testGetLastError()
+    {
+        $record = new GeocodableDataObjectTest();
+        $record->Address = '33 Jeremy McDooglestrontles House';
+        $record->Suburb = 'Frinkiac';
+        $record->Postcode = '3011';
+        $record->Country = '';
+        $record->write();
+
+        $e = $record->getLastGeocodableException();
+        if ($e &&
+            $e->getStatus() === GeocodeService::ERROR_OVER_QUERY_LIMIT) {
+            $this->markTestSkipped(
+                'Skipping '. get_class($this).'::'.__FUNCTION__.'() due to being over quota limit. Exception: '.$e->getMessage()
+            );
+            $this->skipTest = true;
+            return;
+        }
+
+        $this->assertEquals(
+            GeocodeService::ERROR_ZERO_RESULTS,
+            $e->getStatus()
+        );
+    }
+
+    /**
      * Make sure that Lat / Lng is not written to if "is_geocodable"
      * is false.
      */
     public function testDisableLatLngUpdate()
     {
-        Config::inst()->update('Geocodable', 'is_geocodable', false);
+        Config::inst()->update(Geocodable::class, 'is_geocodable', false);
 
         $record = new GeocodableDataObjectTest();
         $record->Address = '101-103 Courtenay Place';

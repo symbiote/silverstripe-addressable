@@ -1,38 +1,46 @@
 language: php
 
 php:
-  - 5.4
+  - 5.6
+
 env:
   matrix:
-    - DB=MYSQL CORE_RELEASE=3.1
+    - DB=MYSQL CORE_RELEASE=4
 
 matrix:
   include:
-    - php: 5.4
-      env:
-        - DB=MYSQL
-        - CORE_RELEASE=3.1
-    - php: 5.4
-      env:
-        - DB=PGSQL
-        - CORE_RELEASE=3.2
-    - php: 5.5
-      env:
-        - DB=MYSQL
-        - CORE_RELEASE=3.3
     - php: 5.6
       env:
+        - RECIPE_VERSION=1.0.x-dev
         - DB=MYSQL
         - PHPCS_TEST=1
-        - CORE_RELEASE=3
+        - PHPUNIT_TEST=1
+    - php: 7.0
+      env:
+        - RECIPE_VERSION=1.1.x-dev
+        - DB=PGSQL
+        - PHPUNIT_TEST=1
+    - php: 7.1
+      env:
+        - RECIPE_VERSION=4.2.x-dev
+        - DB=MYSQL
+        - PDO=1
+        - PHPUNIT_TEST=1
+    - php: 7.2
+      env:
+        - RECIPE_VERSION=4.x-dev
+        - DB=MYSQL
+        - PDO=1
+        - PHPUNIT_TEST=1
 
 before_script:
-  - composer self-update || true
   - phpenv rehash
-  - git clone git://github.com/silverstripe-labs/silverstripe-travis-support.git ~/travis-support
-  - php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss
-  - cd ~/builds/ss
+  - phpenv config-rm xdebug.ini
+  - composer validate
+  - composer require --no-update silverstripe/recipe-cms:$RECIPE_VERSION
+  - if [[ $DB == PGSQL ]]; then composer require --no-update silverstripe/postgresql:2.0.x-dev; fi
+  - composer install --prefer-dist --no-interaction --no-progress --no-suggest --optimize-autoloader --verbose --profile
 
 script:
-  - if [[ $PHPCS_TEST ]]; then vendor/bin/phpcs addressable/code/ addressable/tests/ -n; fi
-  - vendor/bin/phpunit addressable/tests/
+  - if [[ $PHPUNIT_TEST ]]; then vendor/bin/phpunit; fi
+  - if [[ $PHPCS_TEST ]]; then vendor/bin/phpcs src/ src/Forms/ tests/ ; fi

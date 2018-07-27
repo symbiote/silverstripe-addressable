@@ -1,8 +1,0 @@
-name: Addressable
----
-GoogleGeocoding:
-  google_api_url: 'https://maps.googleapis.com/maps/api/geocode/xml'
-  google_api_key: ''
-
-Geocodable:
-  is_geocodable: true

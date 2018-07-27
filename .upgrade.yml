@@ -1,0 +1,5 @@
+mappings:
+  GoogleGeocoding: Symbiote\Addressable\GeocodeService
+  Addressable: Symbiote\Addressable\Addressable
+  Geocodable: Symbiote\Addressable\Geocodable
+  RegexTextField: Symbiote\Addressable\Forms\RegexTextField

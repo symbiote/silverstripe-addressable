@@ -1,70 +1,44 @@
-SilverStripe Addressable Module
-===============================
-[![Build Status](https://travis-ci.org/symbiote/silverstripe-addressable.svg)](https://travis-ci.org/symbiote/silverstripe-addressable)
+# Addressable
 
-The Addressable module adds address fields to an object, and also has support
-for automatic geocoding.
+[![Build Status](https://travis-ci.org/symbiote/silverstripe-addressable.svg?branch=master)](https://travis-ci.org/symbiote/silverstripe-addressable)
+[![Latest Stable Version](https://poser.pugx.org/symbiote/silverstripe-addressable/version.svg)](https://github.com/symbiote/silverstripe-addressable/releases)
+[![Latest Unstable Version](https://poser.pugx.org/symbiote/silverstripe-addressable/v/unstable.svg)](https://packagist.org/packages/symbiote/silverstripe-addressable)
+[![Total Downloads](https://poser.pugx.org/symbiote/silverstripe-addressable/downloads.svg)](https://packagist.org/packages/symbiote/silverstripe-addressable)
+[![License](https://poser.pugx.org/symbiote/silverstripe-addressable/license.svg)](https://github.com/symbiote/silverstripe-addressable/blob/master/LICENSE.md)
 
-Maintainer Contact
-------------------
-*  Marcus Nyeholt (<marcus@symbiote.com.au>)
+Adds address fields to a DataObject and also has support for automatic geocoding of the provided address.
 
-Requirements
-------------
-*  SilverStripe 3.0+
+![CMS screenshot](https://user-images.githubusercontent.com/3859574/43246926-8b218be2-90f6-11e8-9929-72192e23fc81.png)
 
-Documentation
--------------
-
-Quick Usage Overview
---------------------
-
-In order to add simple address fields (address, suburb, city, postcode and
-country) to an object, simply apply to `Addressable` extension:
-
-```yml
-Page:
-  extensions:
-    - Addressable
-```
-
-
-In order to then render the full address into a template, you can use either
-`$FullAddress` to return a simple string, or `$FullAddressHTML` to render
-the address into a HTML `<address>` tag.
-
-You can define a global set of allowed states or countries using
-`Addressable::set_allowed_states()` and `::set_allowed_countries()`
-respectively. These can also be set per-instance using `setAllowedStates()` and
-`setAllowedCountries()`.
-
-If a single string is provided as a value, then this will be set as the field
-for all new objects and the user will not be presented with an input field. If
-the value is an array, the user will be presented with a dropdown field.
-
-To add automatic geocoding to an `Addressable` object when the address is
-changed, simple apply the `Geocodable` extension:
-
-```yml
-
-Page:
-  extensions:
-    - Geocodable
+## Composer Install
 
 ```
-
-This will then use the Google Maps API to translate the address into a latitude
-and longitude on save, and save it into the `Lat` and `Lng` fields. NOTE - to support
-this, you _must_ specify a Google app Server API key
-
-```yml
-GoogleGeocoding:
-  google_api_key: {your_google_server_api_key}
-
+composer require symbiote/silverstripe-addressable:~4.0
 ```
 
-Allow different postcode regex (e.g. UK postcode with numbers and letters mixed) in config.yml
-```yml
-Addressable:
-  set_postcode_regex: '/^[0-9A-Za-z]+$/'
-```
+## Requirements
+
+* SilverStripe 4.0+
+
+## Documentation
+
+* [Quick Start](docs/en/quick-start.md)
+* [Advanced Usage](docs/en/advanced-usage.md)
+* [License](LICENSE.md)
+* [Contributing](CONTRIBUTING.md)
+
+## Changes from SilverStripe 3.X
+
+* `GoogleGeocoding` changed class name to `Symbiote\Addressable\GeocodeService`
+    * The static method `address_to_point` was changed to a non-static method called `addressToPoint`. This allows you to use the Injector and replace GeocodeService with something else if you need to.
+* `Addressable::set_allowed_states(array('' => '', 'NSW' => "New South Wales"));` has been deprecated in favour of config values.
+* `Addressable::set_allowed_countries(array('' => '', 'AU' => "Australia"));` has been deprecated in favour of config values.
+* `Addressable::set_postcode_regex(...);` has been deprecated in favour of config values.
+  * `Addressable::set_postcode_regex` config value has been deprecated in favour of `Addressable::postcode_regex`
+    * NOTE: Previously there was a hack in Addressable that read `Addressable::set_postcode_regex` config value, then called `Addressable::set_postcode_regex()` to update the `protected static postcode_regex;` value in the Addressable __construct() method.
+
+## Credits
+
+* [Mark Taylor](https://github.com/symbiote/silverstripe-addressable/commit/7eb2f81c66502093c82c293943f43de9154ad807) for adding the ability to easily embed a map with AddressMap
+* [Nic](https://github.com/muskie9) for writing tests for this module
+* [AJ Short](https://github.com/ajshort) for initially writing this module
