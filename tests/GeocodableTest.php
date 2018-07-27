@@ -3,8 +3,8 @@
 namespace Symbiote\Addressable\Tests;
 
 use SilverStripe\Core\Config\Config;
-use Symbiote\Addressable\Geocodable;
 use SilverStripe\Dev\SapphireTest;
+use Symbiote\Addressable\Geocodable;
 use Symbiote\Addressable\GeocodeService;
 
 class GeocodableTest extends SapphireTest
@@ -30,18 +30,11 @@ class GeocodableTest extends SapphireTest
             'lng' => 174.7789792,
         ];
 
-        // NOTE(Jake): 2018-07-25
-        //
-        // Ideally we would be able to determine a failure from GoogleGeocoding
-        // rather than assuming a 0,0 == failure.
-        //
-        // This was implemented as sometimes tests would fail in TravisCI, so I'd
-        // rather them be skipped.
-        //
         $e = $record->getLastGeocodableException();
-        if ($e) {
+        if ($e &&
+            $e->getStatus() === GeocodeService::ERROR_OVER_QUERY_LIMIT) {
             $this->markTestSkipped(
-                'Skipping '. get_class($this).'::'.__FUNCTION__.'() due to Google endpoint seemingly not being reachable. Exception: '.$e->getMessage()
+                'Skipping '. get_class($this).'::'.__FUNCTION__.'() due to being over quota limit. Exception: '.$e->getMessage()
             );
             $this->skipTest = true;
             return;
@@ -66,6 +59,15 @@ class GeocodableTest extends SapphireTest
         $record->write();
 
         $e = $record->getLastGeocodableException();
+        if ($e &&
+            $e->getStatus() === GeocodeService::ERROR_OVER_QUERY_LIMIT) {
+            $this->markTestSkipped(
+                'Skipping '. get_class($this).'::'.__FUNCTION__.'() due to being over quota limit. Exception: '.$e->getMessage()
+            );
+            $this->skipTest = true;
+            return;
+        }
+
         $this->assertEquals(
             GeocodeService::ERROR_ZERO_RESULTS,
             $e->getStatus()
