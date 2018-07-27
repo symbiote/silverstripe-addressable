@@ -4,6 +4,7 @@ namespace Symbiote\Addressable;
 
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\Director;
+use GuzzleHttp\Client;
 use SimpleXMLElement;
 use Exception;
 
@@ -61,7 +62,7 @@ class GeocodeService
         }
         $url .= '?'.http_build_query($queryVars);
 
-        $client = new \GuzzleHttp\Client();
+        $client = new Client();
         $response = $client->get($url);
         if (!$response) {
             throw new GeocodeServiceException('No response.', 0, '');
