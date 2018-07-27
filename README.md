@@ -30,6 +30,9 @@ composer require symbiote/silverstripe-addressable:~4.0
 ## Changes from SilverStripe 3.X
 
 * `GoogleGeocoding` changed class name to `Symbiote\Addressable\GeocodeService`
+    * The static method `address_to_point` was changed to a non-static method called `addressToPoint`. This allows you to use the Injector and replace GeocodeService with something else if you need to.
+* `Addressable::set_allowed_states(array('' => '', 'NSW' => "New South Wales"));` has been deprecated in favour of config values.
+* `Addressable::set_allowed_countries(array('' => '', 'AU' => "Australia"));` has been deprecated in favour of config values.
 
 ## Credits
 
