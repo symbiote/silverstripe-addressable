@@ -37,6 +37,11 @@
             "Symbiote\\Addressable\\Tests\\": "tests/"
         }
     },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "4.0.x-dev"
+        }
+    },
     "replace": {
         "ajshort/silverstripe-addressable": "self.version",
         "silverstripe-australia/addressable": "self.version"
