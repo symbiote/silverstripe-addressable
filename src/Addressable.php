@@ -234,7 +234,7 @@ class Addressable extends DataExtension
         if (count($allowedStates) >= 1) {
             // If allowed states are restricted, only allow those
             $fields[] = DropdownField::create('State', $label, $allowedStates);
-        } else if (!$allowedStates) {
+        } elseif (!$allowedStates) {
             // If no allowed states defined, allow the user to type anything
             $fields[] = TextField::create('State', $label);
         }

@@ -28,8 +28,8 @@
         "squizlabs/php_codesniffer": "^3.0"
     },
     "scripts": {
-        "phpcbf": "phpcbf src/ tests/",
-        "phpcs": "phpcs src/ tests/"
+        "phpcbf": "phpcbf src/ src/Forms/ tests/",
+        "phpcs": "phpcs src/ src/Forms/ tests/"
     },
     "autoload": {
         "psr-4": {

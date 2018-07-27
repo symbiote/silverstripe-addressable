@@ -50,6 +50,10 @@ class AddressableTest extends SapphireTest
         $this->assertTrue($addressable2->Country == 'US');
     }
 
+    /**
+     * Test the case where nothing is configured for the allowed_countries so
+     * we fallback to a full list of countries provided by SilverStripe.
+     */
     public function testConfigureNoCountry()
     {
         $record = new AddressableDataObjectTest();
@@ -68,6 +72,9 @@ class AddressableTest extends SapphireTest
         );
     }
 
+    /**
+     * Test the case where we configure 1 country in the allowed_countries config.
+     */
     public function testConfigureOneCountryGlobally()
     {
         Config::inst()->update(Addressable::class, 'allowed_countries', [
@@ -103,10 +110,10 @@ class AddressableTest extends SapphireTest
             $record->Country
         );
 
-        // Test that we only get both countre back in array
+        // Test that we only get one country back in array
         $this->assertEquals(
             [
-            'nz' => 'New Zealand',
+                'nz' => 'New Zealand',
             ],
             $record->getAllowedCountries()
         );
