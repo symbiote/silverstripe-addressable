@@ -265,14 +265,16 @@ class Addressable extends DataExtension
     {
         // Get states from extending object. (ie. Page, DataObject)
         $allowedStates = $this->owner->config()->allowed_states;
-        if (is_array($allowedStates)) {
+        if (is_array($allowedStates) &&
+            $allowedStates) {
             return $allowedStates;
         }
 
         // Get allowed states global. If there are no specific rules on a Page/DataObject
         // fallback to what is configured on this extension
         $allowedStates = Config::inst()->get(__CLASS__, 'allowed_states');
-        if (is_array($allowedStates)) {
+        if (is_array($allowedStates) &&
+            $allowedStates) {
             return $allowedStates;
         }
         return [];
@@ -287,14 +289,16 @@ class Addressable extends DataExtension
     {
         // Get allowed_countries from extending object. (ie. Page, DataObject)
         $allowedCountries = $this->owner->config()->allowed_countries;
-        if (is_array($allowedCountries)) {
+        if (is_array($allowedCountries) &&
+            $allowedCountries) {
             return $allowedCountries;
         }
 
         // Get allowed countries global. If there are no specific rules on a Page/DataObject
         // fallback to what is configured on this extension
         $allowedCountries = Config::inst()->get(__CLASS__, 'allowed_countries');
-        if (is_array($allowedCountries)) {
+        if (is_array($allowedCountries) &&
+            $allowedCountries) {
             return $allowedCountries;
         }
 
