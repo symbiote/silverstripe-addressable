@@ -161,7 +161,7 @@ class Addressable extends DataExtension
             'Height'   => $height,
             'Scale'    => $scale,
             'Address'  => rawurlencode($this->getFullAddress()),
-            'Key'      => Config::inst()->get('GoogleGeocoding', 'google_api_key')
+            'Key'      => Config::inst()->get(GeocodeService::class, 'google_api_key')
         ));
         return $data->renderWith('Symbiote/Addressable/AddressMap');
     }
