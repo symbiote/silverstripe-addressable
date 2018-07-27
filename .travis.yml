@@ -22,13 +22,13 @@ matrix:
         - PHPUNIT_TEST=1
     - php: 7.1
       env:
-        - RECIPE_VERSION=1.2.x-dev
+        - RECIPE_VERSION=4.2.x-dev
         - DB=MYSQL
         - PDO=1
         - PHPUNIT_TEST=1
     - php: 7.2
       env:
-        - RECIPE_VERSION=1.x-dev
+        - RECIPE_VERSION=4.x-dev
         - DB=MYSQL
         - PDO=1
         - PHPUNIT_TEST=1
