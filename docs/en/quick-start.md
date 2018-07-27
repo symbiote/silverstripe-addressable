@@ -23,7 +23,7 @@ Page:
     - Symbiote\Addressable\Geocodable
 ```
 
-3. It is highly recommended that you configure a Google API key or else you will most likely hit "over your quota" issues very quickly.
+3. It is highly recommended that you configure a Google API key or else you will most likely hit "over your quota" issues in production very quickly.
 ```yml
 Symbiote\Addressable\GeocodeService:
   google_api_key: 'API_KEY_HERE'

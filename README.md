@@ -33,6 +33,9 @@ composer require symbiote/silverstripe-addressable:~4.0
     * The static method `address_to_point` was changed to a non-static method called `addressToPoint`. This allows you to use the Injector and replace GeocodeService with something else if you need to.
 * `Addressable::set_allowed_states(array('' => '', 'NSW' => "New South Wales"));` has been deprecated in favour of config values.
 * `Addressable::set_allowed_countries(array('' => '', 'AU' => "Australia"));` has been deprecated in favour of config values.
+* `Addressable::set_postcode_regex(...);` has been deprecated in favour of config values.
+  * `Addressable::set_postcode_regex` config value has been deprecated in favour of `Addressable::postcode_regex`
+    * NOTE: Previously there was a hack in Addressable that read `Addressable::set_postcode_regex` config value, then called `Addressable::set_postcode_regex()` to update the `protected static postcode_regex;` value in the Addressable __construct() method.
 
 ## Credits
 
