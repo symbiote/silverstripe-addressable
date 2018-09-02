@@ -108,7 +108,7 @@ class Geocodable extends DataExtension
             $compositeField->push(ReadonlyField::create('Lat_Readonly', 'Lat', $record->Lat));
             $compositeField->push(ReadonlyField::create('Lng_Readonly', 'Lng', $record->Lng));
         }
-        if ($record->hasExtension('Addressable')) {
+        if ($record->hasExtension(Addressable::class)) {
             // If using addressable, put the fields with it
             $fields->addFieldToTab('Root.Address', ToggleCompositeField::create('Coordinates', 'Coordinates', $compositeField));
         } elseif ($record instanceof SiteTree) {
