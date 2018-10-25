@@ -1,12 +1,38 @@
 # Advanced Configuration
 
-
 ## Configure Geocodable Service
 
+For now, there are two implementations for `GeocodeServiceInterface`:
+
+* `GoogleGeocodeService` (default)
+* `MapboxGeocodeService`
+
+To change the service use your local config:
+
 ```yml
-Symbiote\Addressable\GeocodeService:
+---
+Name: your-local-addressable-config
+After:
+  - 'addressable'
+---
+
+SilverStripe\Core\Injector\Injector:
+  Symbiote\Addressable\GeocodeServiceInterface:
+    class: Symbiote\Addressable\MapboxGeocodeService
+```
+
+Then configure your service related settings:
+
+```yml
+# For using Google Maps
+Symbiote\Addressable\GoogleGeocodeService:
   google_api_url: 'https://maps.googleapis.com/maps/api/geocode/xml' # This is already defined as the default value.
   google_api_key: 'API_KEY_HERE' # Recommended! You will hit quota limit issues in production without this!
+
+# For using Mapbox
+Symbiote\Addressable\MapboxGeocodeService:
+  mapbox_api_url: 'https://api.mapbox.com/geocoding/v5/mapbox.places/' # This is already defined as the default value.
+  mapbox_api_key: 'API_KEY_HERE' # Recommended! You will hit quota limit issues in production without this!
 ```
 
 ## Change regex to validate postcode

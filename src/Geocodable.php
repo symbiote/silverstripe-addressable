@@ -23,6 +23,11 @@ use SilverStripe\Core\Injector\Injector;
 class Geocodable extends DataExtension
 {
     /**
+     * @var Symbiote\Addressable\GeocodeServiceInterface
+     */
+    public $geocoder;
+
+    /**
      * Disable geocoding for onBeforeWrite().
      *
      * You may want to do disable this when modifying lots
@@ -65,7 +70,7 @@ class Geocodable extends DataExtension
 
         $point = [];
         try {
-            $point = Injector::inst()->get(GeocodeService::class)->addressToPoint($address, $region);
+            $point = $this->geocoder->addressToPoint($address, $region);
         } catch (GeocodeServiceException $e) {
             // Default behaviour is to ignore errors like ZERO_RESULTS or this just failing.
             $record->__geocodable_exception = $e;
