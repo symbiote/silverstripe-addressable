@@ -13,7 +13,7 @@ use Exception;
  *
  * @package silverstripe-addressable
  */
-class GeocodeService
+class GoogleGeocodeService implements GeocodeServiceInterface
 {
     const ERROR_ZERO_RESULTS = 'ZERO_RESULTS';
 
@@ -40,9 +40,11 @@ class GeocodeService
      */
     public function addressToPoint($address, $region = '')
     {
-        // Get the URL for the Google API
-        $url = Config::inst()->get(__CLASS__, 'google_api_url');
-        $key = Config::inst()->get(__CLASS__, 'google_api_key');
+        // Get the URL for the Google API (and check for legacy config)
+        $url = Config::inst()->get(__CLASS__, 'google_api_url')
+            ?? Config::inst()->get('Symbiote\\Addressable\\GeocodeService', 'google_api_url');
+        $key = Config::inst()->get(__CLASS__, 'google_api_key')
+            ?? Config::inst()->get('Symbiote\\Addressable\\GeocodeService', 'google_api_key');
 
         if (!$url) {
             // If no URL configured. Stop.
