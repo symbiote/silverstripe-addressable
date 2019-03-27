@@ -5,7 +5,7 @@ namespace Symbiote\Addressable\Tests;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use Symbiote\Addressable\Geocodable;
-use Symbiote\Addressable\GeocodeService;
+use Symbiote\Addressable\GoogleGeocodeService;
 
 class GeocodableTest extends SapphireTest
 {
@@ -32,7 +32,7 @@ class GeocodableTest extends SapphireTest
 
         $e = $record->getLastGeocodableException();
         if ($e &&
-            $e->getStatus() === GeocodeService::ERROR_OVER_QUERY_LIMIT) {
+            $e->getStatus() === GoogleGeocodeService::ERROR_OVER_QUERY_LIMIT) {
             $this->markTestSkipped(
                 'Skipping '. get_class($this).'::'.__FUNCTION__.'() due to being over quota limit. Exception: '.$e->getMessage()
             );
@@ -60,7 +60,7 @@ class GeocodableTest extends SapphireTest
 
         $e = $record->getLastGeocodableException();
         if ($e &&
-            $e->getStatus() === GeocodeService::ERROR_OVER_QUERY_LIMIT) {
+            $e->getStatus() === GoogleGeocodeService::ERROR_OVER_QUERY_LIMIT) {
             $this->markTestSkipped(
                 'Skipping '. get_class($this).'::'.__FUNCTION__.'() due to being over quota limit. Exception: '.$e->getMessage()
             );
@@ -69,7 +69,7 @@ class GeocodableTest extends SapphireTest
         }
 
         $this->assertEquals(
-            GeocodeService::ERROR_ZERO_RESULTS,
+            GoogleGeocodeService::ERROR_ZERO_RESULTS,
             $e->getStatus()
         );
     }
