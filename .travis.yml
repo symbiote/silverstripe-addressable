@@ -1,32 +1,40 @@
 language: php
 
-php:
-  - 5.6
-
 env:
-  matrix:
-    - DB=MYSQL CORE_RELEASE=4
+  global:
+    secure: HtxArKhTcQrlTRIKTmQvf85ytbVcSB24FLxIqOGboN7JauHWIu/0jIOeegH6a6ZN9GxsPeFqOI7vj0jZEhDcGTjvGe8FjX++W6JF1W6Sfo7Hx3iYEaLdGLV2O9pG3jQgsPs6BzvgYl1X0ihvm7QWziSNKZxYMMmVs8Z/dfouadc=
 
 matrix:
   include:
-    - php: 5.6
-      env:
-        - RECIPE_VERSION=1.0.x-dev
-        - DB=MYSQL
-        - PHPCS_TEST=1
-        - PHPUNIT_TEST=1
     - php: 7.0
+      services: postgresql
       env:
-        - RECIPE_VERSION=1.1.x-dev
+        - RECIPE_VERSION=^1.0
         - DB=PGSQL
         - PHPUNIT_TEST=1
     - php: 7.1
+      services: mysql
       env:
         - RECIPE_VERSION=4.2.x-dev
         - DB=MYSQL
         - PDO=1
         - PHPUNIT_TEST=1
     - php: 7.2
+      services: mysql
+      env:
+        - RECIPE_VERSION=4.x-dev
+        - DB=MYSQL
+        - PDO=1
+        - PHPUNIT_TEST=1
+    - php: 7.3
+      services: mysql
+      env:
+        - RECIPE_VERSION=4.x-dev
+        - DB=MYSQL
+        - PDO=1
+        - PHPUNIT_TEST=1
+    - php: 7.4
+      services: mysql
       env:
         - RECIPE_VERSION=4.x-dev
         - DB=MYSQL
