@@ -43,7 +43,8 @@ class GoogleGeocodeService implements GeocodeServiceInterface
         // Get the URL for the Google API (and check for legacy config)
         $url = Config::inst()->get(__CLASS__, 'google_api_url')
             ?? Config::inst()->get('Symbiote\\Addressable\\GeocodeService', 'google_api_url');
-        $key = Config::inst()->get(__CLASS__, 'google_api_key')
+        $key = getenv('GOOGLE_API_KEY')
+            ?? Config::inst()->get(__CLASS__, 'google_api_key')
             ?? Config::inst()->get('Symbiote\\Addressable\\GeocodeService', 'google_api_key');
 
         if (!$url) {
