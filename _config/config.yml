@@ -4,6 +4,6 @@ Name: addressable
 SilverStripe\Core\Injector\Injector:
   Symbiote\Addressable\Geocodable:
     properties:
-      geocoder: %$Symbiote\Addressable\GeocodeServiceInterface
+      geocoder: '%$Symbiote\Addressable\GeocodeServiceInterface'
   Symbiote\Addressable\GeocodeServiceInterface:
     class: Symbiote\Addressable\GoogleGeocodeService
