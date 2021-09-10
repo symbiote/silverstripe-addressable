@@ -3,6 +3,7 @@
 namespace Symbiote\Addressable;
 
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Environment;
 use SilverStripe\Control\Director;
 use GuzzleHttp\Client;
 use SimpleXMLElement;
@@ -32,6 +33,44 @@ class GoogleGeocodeService implements GeocodeServiceInterface
     private static $google_api_key = '';
 
     /**
+     * Retrieve the Google Geocoding API key from environment or config API
+     * @throws \Exception
+     */
+    public function getApiKey() : string {
+        $key = Environment::getEnv('GOOGLE_API_KEY');
+        if(!$key) {
+            $key = Config::inst()->get(__CLASS__, 'google_api_key');
+            if(!$key) {
+                $key = Config::inst()->get('Symbiote\\Addressable\\GeocodeService', 'google_api_key');
+            }
+        }
+        if(!$key) {
+            // Google Geocode API requires a key
+            throw new \Exception('No google_api_key configured. This is not allowed.');
+        }
+        return $key;
+    }
+
+    /**
+     * Retrieve the Google Geocoding API URL from config API
+     * @throws \Exception
+     */
+    public function getApiUrl() : string {
+        // Get the URL for the Google API (and check for legacy config)
+        $url = Config::inst()->get(__CLASS__, 'google_api_url');
+        if(!$url) {
+            $url = Config::inst()->get('Symbiote\\Addressable\\GeocodeService', 'google_api_url');
+        }
+
+        if (!$url) {
+            // If no URL configured. Stop.
+            throw new \Exception('No google_api_url configured. This is not allowed.');
+        }
+
+        return $url;
+    }
+
+    /**
      * Convert an address into a latitude and longitude.
      *
      * @param string $address The address to geocode.
@@ -40,17 +79,9 @@ class GoogleGeocodeService implements GeocodeServiceInterface
      */
     public function addressToPoint($address, $region = '')
     {
-        // Get the URL for the Google API (and check for legacy config)
-        $url = Config::inst()->get(__CLASS__, 'google_api_url')
-            ?? Config::inst()->get('Symbiote\\Addressable\\GeocodeService', 'google_api_url');
-        $key = getenv('GOOGLE_API_KEY')
-            ?? Config::inst()->get(__CLASS__, 'google_api_key')
-            ?? Config::inst()->get('Symbiote\\Addressable\\GeocodeService', 'google_api_key');
+        $url = $this->getApiUrl();
 
-        if (!$url) {
-            // If no URL configured. Stop.
-            throw new GeocodeServiceException('No google_api_url configured. This is not allowed.');
-        }
+        $key = $this->getApiKey();
 
         // Add params
         $queryVars = [
