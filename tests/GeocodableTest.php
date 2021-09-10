@@ -26,8 +26,8 @@ class GeocodableTest extends SapphireTest
         $record->write();
 
         $expected = [
-            'lat' => -41.2928922,
-            'lng' => 174.7789792,
+            'lat' => -41.2926516,
+            'lng' => 174.7789566
         ];
 
         $e = $record->getLastGeocodableException();
