@@ -23,7 +23,7 @@ class GeocodableApiValuesTest extends SapphireTest
     /**
      * Set up config
      */
-    public function setUp() {
+    public function setUp() : void {
         parent::setUp();
         Environment::setEnv('GOOGLE_API_KEY', $this->envApiKey);
         Config::inst()->update( GoogleGeocodeService::class, 'google_api_key', $this->googleGeocodeServiceApiKey );
@@ -35,7 +35,7 @@ class GeocodableApiValuesTest extends SapphireTest
     /**
      * Reset config
      */
-    public function tearDown() {
+    public function tearDown() : void {
         parent::tearDown();
         Environment::setEnv('GOOGLE_API_KEY', false);
         Config::inst()->update( GoogleGeocodeService::class, 'google_api_key', null );
