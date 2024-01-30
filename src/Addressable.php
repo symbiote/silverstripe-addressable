@@ -2,17 +2,17 @@
 
 namespace Symbiote\Addressable;
 
+use Exception;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\TextField;
-use SilverStripe\Forms\HeaderField;
 use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\HeaderField;
+use SilverStripe\Forms\TextField;
 use SilverStripe\i18n\Data\Intl\IntlLocales;
 use SilverStripe\ORM\DataExtension;
-use Symbiote\Addressable\Forms\RegexTextField;
-use Dynamic\CountryDropdownField\Fields\CountryDropdownField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
-use Exception;
+use Symbiote\Addressable\Forms\RegexTextField;
+use Symbiote\Addressable\GoogleGeocodeService;
 
 /**
  * Adds simple address fields to an object, as well as fields to manage them.
@@ -159,7 +159,7 @@ class Addressable extends DataExtension
             'Height'   => $height,
             'Scale'    => $scale,
             'Address'  => rawurlencode($this->getFullAddress()),
-            'Key'      => Config::inst()->get(GeocodeService::class, 'google_api_key')
+            'Key'      => Config::inst()->get(GoogleGeocodeService::class, 'google_api_key')
         ));
         return $data->renderWith('Symbiote/Addressable/AddressMap');
     }
