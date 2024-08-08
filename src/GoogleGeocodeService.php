@@ -16,9 +16,9 @@ use Exception;
  */
 class GoogleGeocodeService implements GeocodeServiceInterface
 {
-    const ERROR_ZERO_RESULTS = 'ZERO_RESULTS';
+    public const ERROR_ZERO_RESULTS = 'ZERO_RESULTS';
 
-    const ERROR_OVER_QUERY_LIMIT = 'OVER_QUERY_LIMIT';
+    public const ERROR_OVER_QUERY_LIMIT = 'OVER_QUERY_LIMIT';
 
     /**
      * @var string
@@ -39,7 +39,7 @@ class GoogleGeocodeService implements GeocodeServiceInterface
     public function getApiKey() : string {
         $key = Environment::getEnv('GOOGLE_API_KEY');
         if(!$key) {
-            $key = Config::inst()->get(__CLASS__, 'google_api_key');
+            $key = Config::inst()->get(self::class, 'google_api_key');
             if(!$key) {
                 $key = Config::inst()->get('Symbiote\\Addressable\\GeocodeService', 'google_api_key');
             }
@@ -57,7 +57,7 @@ class GoogleGeocodeService implements GeocodeServiceInterface
      */
     public function getApiUrl() : string {
         // Get the URL for the Google API (and check for legacy config)
-        $url = Config::inst()->get(__CLASS__, 'google_api_url');
+        $url = Config::inst()->get(self::class, 'google_api_url');
         if(!$url) {
             $url = Config::inst()->get('Symbiote\\Addressable\\GeocodeService', 'google_api_url');
         }

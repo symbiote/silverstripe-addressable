@@ -36,8 +36,8 @@ class MapboxGeocodeService implements GeocodeServiceInterface
     public function addressToPoint($address, $region = '')
     {
         // Get the URL for the Mapbox API
-        $url = Config::inst()->get(__CLASS__, 'mapbox_api_url');
-        $key = Config::inst()->get(__CLASS__, 'mapbox_api_key');
+        $url = Config::inst()->get(self::class, 'mapbox_api_url');
+        $key = Config::inst()->get(self::class, 'mapbox_api_key');
 
         if (!$url) {
             // If no URL configured. Stop.
@@ -86,7 +86,7 @@ class MapboxGeocodeService implements GeocodeServiceInterface
 
         // We take the first match, because that's most likely the best match
         $feature = reset($responseBody->features);
-        list($lng, $lat) = $feature->geometry->coordinates;
+        [$lng, $lat] = $feature->geometry->coordinates;
 
         return [
             'lat' => (float)$lat,
