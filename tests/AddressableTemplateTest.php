@@ -20,7 +20,7 @@ class AddressableTemplateTest extends SapphireTest
         // This is **not** a real key.
         // This is to test that the key gets put into the embeddable map properly.
         //
-        Config::inst()->merge(GeocodeService::class, 'google_api_key', self::FAKE_GOOGLE_MAP_API_KEY);
+        Config::inst()->set(GeocodeService::class, 'google_api_key', self::FAKE_GOOGLE_MAP_API_KEY);
 
         $record = new AddressableDataObjectTest();
         $record->Address = '101-103 Courtenay Place';

@@ -77,7 +77,7 @@ class AddressableTest extends SapphireTest
      */
     public function testConfigureOneCountryGlobally()
     {
-        Config::inst()->merge(Addressable::class, 'allowed_countries', [
+        Config::inst()->set(Addressable::class, 'allowed_countries', [
             'au' => 'Australia',
         ]);
         $record = new AddressableDataObjectTest();
@@ -99,7 +99,7 @@ class AddressableTest extends SapphireTest
 
     public function testConfigureOneCountryOnExtendable()
     {
-        Config::inst()->merge(AddressableDataObjectTest::class, 'allowed_countries', [
+        Config::inst()->set(AddressableDataObjectTest::class, 'allowed_countries', [
             'nz' => 'New Zealand',
         ]);
         $record = new AddressableDataObjectTest();
@@ -121,7 +121,7 @@ class AddressableTest extends SapphireTest
 
     public function testConfigureOneStateGlobally()
     {
-        Config::inst()->merge(Addressable::class, 'allowed_states', [
+        Config::inst()->set(Addressable::class, 'allowed_states', [
             'vic' => 'Victoria',
         ]);
         $record = new AddressableDataObjectTest();
@@ -143,7 +143,7 @@ class AddressableTest extends SapphireTest
 
     public function testConfigureOneStateOnExtendable()
     {
-        Config::inst()->merge(AddressableDataObjectTest::class, 'allowed_states', [
+        Config::inst()->set(AddressableDataObjectTest::class, 'allowed_states', [
             'nsw' => 'New South Wales',
         ]);
         $record = new AddressableDataObjectTest();

@@ -26,10 +26,10 @@ class GeocodableApiValuesTest extends SapphireTest
     public function setUp() : void {
         parent::setUp();
         Environment::setEnv('GOOGLE_API_KEY', $this->envApiKey);
-        Config::inst()->merge( GoogleGeocodeService::class, 'google_api_key', $this->googleGeocodeServiceApiKey );
-        Config::inst()->merge( 'Symbiote\\Addressable\\GeocodeService', 'google_api_key', $this->geocodeServiceApiKey );
-        Config::inst()->merge( GoogleGeocodeService::class, 'google_api_url', $this->googleGeocodeServiceApiUrl );
-        Config::inst()->merge( 'Symbiote\\Addressable\\GeocodeService', 'google_api_url', $this->geocodeServiceApiUrl );
+        Config::inst()->set( GoogleGeocodeService::class, 'google_api_key', $this->googleGeocodeServiceApiKey );
+        Config::inst()->set( 'Symbiote\\Addressable\\GeocodeService', 'google_api_key', $this->geocodeServiceApiKey );
+        Config::inst()->set( GoogleGeocodeService::class, 'google_api_url', $this->googleGeocodeServiceApiUrl );
+        Config::inst()->set( 'Symbiote\\Addressable\\GeocodeService', 'google_api_url', $this->geocodeServiceApiUrl );
     }
 
     /**
@@ -38,10 +38,10 @@ class GeocodableApiValuesTest extends SapphireTest
     public function tearDown() : void {
         parent::tearDown();
         Environment::setEnv('GOOGLE_API_KEY', false);
-        Config::inst()->merge( GoogleGeocodeService::class, 'google_api_key', null );
-        Config::inst()->merge( 'Symbiote\\Addressable\\GeocodeService', 'google_api_key', null );
-        Config::inst()->merge( GoogleGeocodeService::class, 'google_api_url', null );
-        Config::inst()->merge( 'Symbiote\\Addressable\\GeocodeService', 'google_api_url', null );
+        Config::inst()->set( GoogleGeocodeService::class, 'google_api_key', null );
+        Config::inst()->set( 'Symbiote\\Addressable\\GeocodeService', 'google_api_key', null );
+        Config::inst()->set( GoogleGeocodeService::class, 'google_api_url', null );
+        Config::inst()->set( 'Symbiote\\Addressable\\GeocodeService', 'google_api_url', null );
     }
 
     /**
@@ -65,20 +65,20 @@ class GeocodableApiValuesTest extends SapphireTest
 
         // empty string value
         Environment::setEnv('GOOGLE_API_KEY', false);
-        Config::inst()->merge( GoogleGeocodeService::class, 'google_api_key', '' );
+        Config::inst()->set( GoogleGeocodeService::class, 'google_api_key', '' );
         $key = $service->getApiKey();
         $this->assertEquals($this->geocodeServiceApiKey, $key, "The API key should be the key set via config API on legacy GeocodeService");
 
         // null value
         Environment::setEnv('GOOGLE_API_KEY', false);
-        Config::inst()->merge( GoogleGeocodeService::class, 'google_api_key', null );
+        Config::inst()->set( GoogleGeocodeService::class, 'google_api_key', null );
         $key = $service->getApiKey();
         $this->assertEquals($this->geocodeServiceApiKey, $key, "The API key should be the key set via config API on legacy GeocodeService");
 
         // lack of config value should throw an \Exception
         Environment::setEnv('GOOGLE_API_KEY', false);
-        Config::inst()->merge( GoogleGeocodeService::class, 'google_api_key', null );
-        Config::inst()->merge( 'Symbiote\\Addressable\\GeocodeService', 'google_api_key', null );
+        Config::inst()->set( GoogleGeocodeService::class, 'google_api_key', null );
+        Config::inst()->set( 'Symbiote\\Addressable\\GeocodeService', 'google_api_key', null );
         try {
             $key = $service->getApiKey();
             $this->assertTrue(false, "Lack of an API key should trigger an \Exception");
@@ -98,18 +98,18 @@ class GeocodableApiValuesTest extends SapphireTest
         $this->assertEquals($this->googleGeocodeServiceApiUrl, $url, "The API URL should be the URL set via config API on GoogleGeocodeService");
 
         // empty string value
-        Config::inst()->merge( GoogleGeocodeService::class, 'google_api_url', '' );
+        Config::inst()->set( GoogleGeocodeService::class, 'google_api_url', '' );
         $url = $service->getApiUrl();
         $this->assertEquals($this->geocodeServiceApiUrl, $url, "The API url should be the url set via config API on legacy GeocodeService");
 
         // null value
-        Config::inst()->merge( GoogleGeocodeService::class, 'google_api_url', null );
+        Config::inst()->set( GoogleGeocodeService::class, 'google_api_url', null );
         $url = $service->getApiUrl();
         $this->assertEquals($this->geocodeServiceApiUrl, $url, "The API url should be the url set via config API on legacy GeocodeService");
 
         // lack of config value should throw an \Exception
-        Config::inst()->merge( GoogleGeocodeService::class, 'google_api_url', null );
-        Config::inst()->merge( 'Symbiote\\Addressable\\GeocodeService', 'google_api_url', null );
+        Config::inst()->set( GoogleGeocodeService::class, 'google_api_url', null );
+        Config::inst()->set( 'Symbiote\\Addressable\\GeocodeService', 'google_api_url', null );
         try {
             $url = $service->getApiUrl();
             $this->assertTrue(false, "Lack of an API URL should trigger an \Exception");

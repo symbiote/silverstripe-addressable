@@ -65,6 +65,7 @@ class Geocodable extends DataExtension
             && $record->Lat
             && $record->Lng
         ) {
+            // No address change, no geocoding
             return;
         }
 
