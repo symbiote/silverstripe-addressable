@@ -34,7 +34,7 @@ class GeocodableTest extends SapphireTest
         if ($e &&
             $e->getStatus() === GoogleGeocodeService::ERROR_OVER_QUERY_LIMIT) {
             $this->markTestSkipped(
-                'Skipping '. static::class.'::'.__FUNCTION__.'() due to being over quota limit. Exception: '.$e->getMessage()
+                'Skipping ' . static::class . '::' . __FUNCTION__ . '() due to being over quota limit. Exception: ' . $e->getMessage()
             );
             $this->skipTest = true;
             return;
@@ -63,7 +63,7 @@ class GeocodableTest extends SapphireTest
         if ($e &&
             $e->getStatus() === GoogleGeocodeService::ERROR_OVER_QUERY_LIMIT) {
             $this->markTestSkipped(
-                'Skipping '. static::class.'::'.__FUNCTION__.'() due to being over quota limit. Exception: '.$e->getMessage()
+                'Skipping ' . static::class . '::' . __FUNCTION__ . '() due to being over quota limit. Exception: ' . $e->getMessage()
             );
             $this->skipTest = true;
             return;

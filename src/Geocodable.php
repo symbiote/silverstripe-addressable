@@ -115,8 +115,8 @@ class Geocodable extends DataExtension
         $compositeField->push($overrideField = CheckboxField::create('LatLngOverride', 'Override Latitude and Longitude?'));
         $overrideField->setDescription('Check this box and save to be able to edit the latitude and longitude manually.');
         if ($record->Lng && $record->Lat) {
-            $googleMapURL = 'https://maps.google.com/?q='.$record->Lat.','.$record->Lng;
-            $googleMapDiv = '<div class="field"><label class="left" for="Form_EditForm_MapURL_Readonly">Google Map</label><div class="middleColumn"><a href="'.$googleMapURL.'" target="_blank">'.$googleMapURL.'</a></div></div>';
+            $googleMapURL = 'https://maps.google.com/?q=' . $record->Lat . ',' . $record->Lng;
+            $googleMapDiv = '<div class="field"><label class="left" for="Form_EditForm_MapURL_Readonly">Google Map</label><div class="middleColumn"><a href="' . $googleMapURL . '" target="_blank">' . $googleMapURL . '</a></div></div>';
             $compositeField->push(LiteralField::create('MapURL_Readonly', $googleMapDiv));
         }
         if ($record->LatLngOverride) {

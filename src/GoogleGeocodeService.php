@@ -36,15 +36,16 @@ class GoogleGeocodeService implements GeocodeServiceInterface
      * Retrieve the Google Geocoding API key from environment or config API
      * @throws \Exception
      */
-    public function getApiKey() : string {
+    public function getApiKey() : string
+    {
         $key = Environment::getEnv('GOOGLE_API_KEY');
-        if(!$key) {
+        if (!$key) {
             $key = Config::inst()->get(self::class, 'google_api_key');
-            if(!$key) {
+            if (!$key) {
                 $key = Config::inst()->get('Symbiote\\Addressable\\GeocodeService', 'google_api_key');
             }
         }
-        if(!$key) {
+        if (!$key) {
             // Google Geocode API requires a key
             throw new \Exception('No google_api_key configured. This is not allowed.');
         }
@@ -55,10 +56,11 @@ class GoogleGeocodeService implements GeocodeServiceInterface
      * Retrieve the Google Geocoding API URL from config API
      * @throws \Exception
      */
-    public function getApiUrl() : string {
+    public function getApiUrl() : string
+    {
         // Get the URL for the Google API (and check for legacy config)
         $url = Config::inst()->get(self::class, 'google_api_url');
-        if(!$url) {
+        if (!$url) {
             $url = Config::inst()->get('Symbiote\\Addressable\\GeocodeService', 'google_api_url');
         }
 
@@ -94,7 +96,7 @@ class GoogleGeocodeService implements GeocodeServiceInterface
         if ($key) {
             $queryVars['key'] = $key;
         }
-        $url .= '?'.http_build_query($queryVars);
+        $url .= '?' . http_build_query($queryVars);
 
         $client = new Client();
         $response = $client->get($url);
@@ -103,7 +105,7 @@ class GoogleGeocodeService implements GeocodeServiceInterface
         }
         $statusCode = $response->getStatusCode();
         if ($statusCode !== 200) {
-            throw new GeocodeServiceException('Unexpected status code:'.$statusCode, $statusCode, '');
+            throw new GeocodeServiceException('Unexpected status code:' . $statusCode, $statusCode, '');
         }
         $responseBody = (string)$response->getBody();
         $xml = new SimpleXMLElement($responseBody);
@@ -112,14 +114,14 @@ class GoogleGeocodeService implements GeocodeServiceInterface
             if (isset($xml->status)) {
                 $status = (string)$xml->status;
                 if ($status === self::ERROR_ZERO_RESULTS) {
-                    throw new GeocodeServiceException('Zero results returned. Invalid status from response: '.$status, $statusCode, $responseBody);
+                    throw new GeocodeServiceException('Zero results returned. Invalid status from response: ' . $status, $statusCode, $responseBody);
                 } else {
-                    throw new GeocodeServiceException('Unhandled status from response: '.$status, $statusCode, $responseBody);
+                    throw new GeocodeServiceException('Unhandled status from response: ' . $status, $statusCode, $responseBody);
                 }
             }
             // Fallback to full string dump
             $text = trim($response->getBody());
-            throw new GeocodeServiceException('Invalid response: '.$text, $responseBody);
+            throw new GeocodeServiceException('Invalid response: ' . $text, $responseBody);
         }
         $location = $xml->result->geometry->location;
         return [

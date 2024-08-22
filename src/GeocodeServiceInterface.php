@@ -7,7 +7,8 @@ namespace Symbiote\Addressable;
  *
  * @package silverstripe-addressable
  */
-interface GeocodeServiceInterface {
+interface GeocodeServiceInterface
+{
 
     /**
      * Convert an address into a latitude and longitude.
@@ -17,5 +18,4 @@ interface GeocodeServiceInterface {
      * @return array An associative array with lat and lng keys.
      */
     public function addressToPoint($address, $region = '');
-
 }
