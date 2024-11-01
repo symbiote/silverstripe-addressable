@@ -7,7 +7,5 @@ use SilverStripe\ORM\DataObject;
 
 class AddressableDataObjectTest extends DataObject
 {
-    private static $extensions = array(
-        Addressable::class,
-    );
+    private static $extensions = [Addressable::class];
 }

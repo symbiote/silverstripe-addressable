@@ -36,8 +36,8 @@ class MapboxGeocodeService implements GeocodeServiceInterface
     public function addressToPoint($address, $region = '')
     {
         // Get the URL for the Mapbox API
-        $url = Config::inst()->get(__CLASS__, 'mapbox_api_url');
-        $key = Config::inst()->get(__CLASS__, 'mapbox_api_key');
+        $url = Config::inst()->get(self::class, 'mapbox_api_url');
+        $key = Config::inst()->get(self::class, 'mapbox_api_key');
 
         if (!$url) {
             // If no URL configured. Stop.
@@ -57,7 +57,7 @@ class MapboxGeocodeService implements GeocodeServiceInterface
         if ($region) {
             $queryVars['country'] = $region;
         }
-        $url .= urlencode($address).'.json?'.http_build_query($queryVars);
+        $url .= urlencode($address) . '.json?' . http_build_query($queryVars);
 
         $client = new Client();
         $response = $client->get($url);
@@ -66,27 +66,27 @@ class MapboxGeocodeService implements GeocodeServiceInterface
         }
         $statusCode = $response->getStatusCode();
         if ($statusCode !== 200) {
-            throw new GeocodeServiceException('Unexpected status code:'.$statusCode, $statusCode, '');
+            throw new GeocodeServiceException('Unexpected status code:' . $statusCode, $statusCode, '');
         }
         $responseBody = json_decode((string)$response->getBody());
 
         // Error handling
         if ($responseBody) {
             if (isset($responseBody->message)) {
-                throw new GeocodeServiceException('Error message: '.$responseBody->message, $statusCode, $responseBody);
+                throw new GeocodeServiceException('Error message: ' . $responseBody->message, $statusCode, $responseBody);
             }
             if (!isset($responseBody->features) || !count($responseBody->features) === 0) {
-                throw new GeocodeServiceException('Zero results returned. Invalid status from response: '.$status, $statusCode, $responseBody);
+                throw new GeocodeServiceException('Zero results returned. Invalid status from response: ' . $status, $statusCode, $responseBody);
             }
         } else {
             // Fallback to full string dump
             $text = trim($response->getBody());
-            throw new GeocodeServiceException('Invalid response: '.$text, $statusCode, $responseBody);
+            throw new GeocodeServiceException('Invalid response: ' . $text, $statusCode, $responseBody);
         }
 
         // We take the first match, because that's most likely the best match
         $feature = reset($responseBody->features);
-        list($lng, $lat) = $feature->geometry->coordinates;
+        [$lng, $lat] = $feature->geometry->coordinates;
 
         return [
             'lat' => (float)$lat,

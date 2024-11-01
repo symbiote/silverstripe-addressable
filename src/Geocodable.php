@@ -2,6 +2,7 @@
 
 namespace Symbiote\Addressable;
 
+use Psr\Log\LoggerInterface;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\CompositeField;
@@ -38,18 +39,18 @@ class Geocodable extends DataExtension
      */
     private static $is_geocodable = true;
 
-    private static $db = array(
+    private static $db = [
         'LatLngOverride' => 'Boolean',
         'Lat' => 'Decimal(10,7)',
         'Lng' => 'Decimal(10,7)'
-    );
+    ];
 
     public function onBeforeWrite()
     {
         $record = $this->getOwner();
         // Reset last error
         $record->__geocodable_exception = null;
-        if (!Config::inst()->get(__CLASS__, 'is_geocodable')) {
+        if (!Config::inst()->get(self::class, 'is_geocodable')) {
             // Allow user-code to disable Geocodable. This was added
             // so that dev/tasks that write a *lot* of Geocodable records can
             // ignore this expensive logic.
@@ -60,8 +61,11 @@ class Geocodable extends DataExtension
             // and most likely input their own values.
             return;
         }
-        if (!$record->hasMethod('isAddressChanged') ||
-            !$record->isAddressChanged()) {
+        if ((!$record->hasMethod('isAddressChanged') || !$record->isAddressChanged())
+            && $record->Lat
+            && $record->Lng
+        ) {
+            // No address change, no geocoding
             return;
         }
 
@@ -92,18 +96,27 @@ class Geocodable extends DataExtension
         return $this->owner->__geocodable_exception;
     }
 
+    public function getGeocoder()
+    {
+        return $this->geocoder;
+    }
+
     public function updateCMSFields(FieldList $fields)
     {
         $record = $this->getOwner();
-        $fields->removeByName(array('LatLngOverride', 'Lat', 'Lng'));
+        $fields->removeByName([
+            'LatLngOverride',
+            'Lat',
+            'Lng'
+        ]);
 
         // Adds Lat/Lng fields for viewing in the CMS
         $compositeField = CompositeField::create();
         $compositeField->push($overrideField = CheckboxField::create('LatLngOverride', 'Override Latitude and Longitude?'));
         $overrideField->setDescription('Check this box and save to be able to edit the latitude and longitude manually.');
         if ($record->Lng && $record->Lat) {
-            $googleMapURL = 'https://maps.google.com/?q='.$record->Lat.','.$record->Lng;
-            $googleMapDiv = '<div class="field"><label class="left" for="Form_EditForm_MapURL_Readonly">Google Map</label><div class="middleColumn"><a href="'.$googleMapURL.'" target="_blank">'.$googleMapURL.'</a></div></div>';
+            $googleMapURL = 'https://maps.google.com/?q=' . $record->Lat . ',' . $record->Lng;
+            $googleMapDiv = '<div class="field"><label class="left" for="Form_EditForm_MapURL_Readonly">Google Map</label><div class="middleColumn"><a href="' . $googleMapURL . '" target="_blank">' . $googleMapURL . '</a></div></div>';
             $compositeField->push(LiteralField::create('MapURL_Readonly', $googleMapDiv));
         }
         if ($record->LatLngOverride) {
@@ -118,7 +131,7 @@ class Geocodable extends DataExtension
             $fields->addFieldToTab('Root.Address', ToggleCompositeField::create('Coordinates', 'Coordinates', $compositeField));
         } elseif ($record instanceof SiteTree) {
             // If SIteTree but not using Addressable, put after 'Metadata' toggle composite field
-            $fields->insertAfter($compositeField, 'ExtraMeta');
+            $fields->insertAfter('ExtraMeta', $compositeField);
         } else {
             $fields->addFieldToTab('Root.Main', ToggleCompositeField::create('Coordinates', 'Coordinates', $compositeField));
         }
@@ -126,6 +139,10 @@ class Geocodable extends DataExtension
 
     public function updateFrontEndFields(FieldList $fields)
     {
-        $fields->removeByName(array('LatLngOverride', 'Lat', 'Lng'));
+        $fields->removeByName([
+            'LatLngOverride',
+            'Lat',
+            'Lng'
+        ]);
     }
 }

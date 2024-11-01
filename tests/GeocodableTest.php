@@ -34,7 +34,7 @@ class GeocodableTest extends SapphireTest
         if ($e &&
             $e->getStatus() === GoogleGeocodeService::ERROR_OVER_QUERY_LIMIT) {
             $this->markTestSkipped(
-                'Skipping '. get_class($this).'::'.__FUNCTION__.'() due to being over quota limit. Exception: '.$e->getMessage()
+                'Skipping ' . static::class . '::' . __FUNCTION__ . '() due to being over quota limit. Exception: ' . $e->getMessage()
             );
             $this->skipTest = true;
             return;
@@ -52,9 +52,10 @@ class GeocodableTest extends SapphireTest
     public function testGetLastError()
     {
         $record = new GeocodableDataObjectTest();
-        $record->Address = '33 Jeremy McDooglestrontles House';
-        $record->Suburb = 'Frinkiac';
-        $record->Postcode = '3011';
+        $record->Address = '999 Non Existant Street';
+        $record->Suburb = 'Dreaming';
+        $record->Postcode = '9999';
+        $record->State = 'ZZZ';
         $record->Country = '';
         $record->write();
 
@@ -62,7 +63,7 @@ class GeocodableTest extends SapphireTest
         if ($e &&
             $e->getStatus() === GoogleGeocodeService::ERROR_OVER_QUERY_LIMIT) {
             $this->markTestSkipped(
-                'Skipping '. get_class($this).'::'.__FUNCTION__.'() due to being over quota limit. Exception: '.$e->getMessage()
+                'Skipping ' . static::class . '::' . __FUNCTION__ . '() due to being over quota limit. Exception: ' . $e->getMessage()
             );
             $this->skipTest = true;
             return;
@@ -80,7 +81,7 @@ class GeocodableTest extends SapphireTest
      */
     public function testDisableLatLngUpdate()
     {
-        Config::inst()->update(Geocodable::class, 'is_geocodable', false);
+        Config::inst()->set(Geocodable::class, 'is_geocodable', false);
 
         $record = new GeocodableDataObjectTest();
         $record->Address = '101-103 Courtenay Place';

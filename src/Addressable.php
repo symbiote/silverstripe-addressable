@@ -24,13 +24,13 @@ use Exception;
  */
 class Addressable extends DataExtension
 {
-    private static $db = array(
-        'Address'  => 'Varchar(255)',
-        'Suburb'   => 'Varchar(64)',
-        'State'    => 'Varchar(64)',
+    private static $db = [
+        'Address' => 'Varchar(255)',
+        'Suburb' => 'Varchar(64)',
+        'State' => 'Varchar(64)',
         'Postcode' => 'Varchar(10)',
         'Country'  => 'Varchar(2)'
-    );
+    ];
 
     /**
      * Define an array of states that the user can select from.
@@ -63,7 +63,7 @@ class Addressable extends DataExtension
 
         // Throw exception for deprecated config
         if (Config::inst()->get('Addressable', 'set_postcode_regex') ||
-            Config::inst()->get(__CLASS__, 'set_postcode_regex')) {
+            Config::inst()->get(self::class, 'set_postcode_regex')) {
             throw new Exception('Addressable config "set_postcode_regex" is deprecated in favour of using YML config "postcode_regex"');
         }
     }
@@ -90,15 +90,13 @@ class Addressable extends DataExtension
         $allowedStates = $this->owner->getAllowedStates();
         if (is_array($allowedStates) &&
             count($allowedStates) === 1) {
-            reset($allowedStates);
-            $this->owner->State = key($allowedStates);
+            $this->owner->State = array_key_first($allowedStates);
         }
 
         $allowedCountries = $this->owner->getAllowedCountries();
         if (is_array($allowedCountries) &&
             count($allowedCountries) === 1) {
-            reset($allowedCountries);
-            $this->owner->Country = key($allowedCountries);
+            $this->owner->Country = array_key_first($allowedCountries);
         }
     }
 
@@ -123,13 +121,13 @@ class Addressable extends DataExtension
      */
     public function getFullAddress()
     {
-        $parts = array(
+        $parts = [
             $this->owner->Address,
             $this->owner->Suburb,
             $this->owner->State,
             $this->owner->Postcode,
             $this->owner->getCountryName()
-        );
+        ];
 
         return implode(', ', array_filter($parts));
     }
@@ -154,14 +152,27 @@ class Addressable extends DataExtension
      */
     public function AddressMap($width = 320, $height = 240, $scale = 1)
     {
-        $data = $this->owner->customise(array(
+        $data = [
+            'Type'     => 'Google',
             'Width'    => $width,
             'Height'   => $height,
             'Scale'    => $scale,
             'Address'  => rawurlencode($this->getFullAddress()),
-            'Key'      => Config::inst()->get(GeocodeService::class, 'google_api_key')
-        ));
-        return $data->renderWith('Symbiote/Addressable/AddressMap');
+            'Key'      => Config::inst()->get(GoogleGeocodeService::class, 'google_api_key')
+        ];
+
+        if ($this->owner->hasExtension(Geocodable::class)) {
+            $data['Lat'] = $this->owner->Lat;
+            $data['Lng'] = $this->owner->Lng;
+
+            if (is_a($this->owner->getGeocoder(), MapboxGeocodeService::class)) {
+                $data['Type'] = 'Mapbox';
+                $data['Key'] = Config::inst()->get(MapboxGeocodeService::class, 'mapbox_api_key');
+            }
+        }
+
+        $object = $this->owner->customise($data);
+        return $object->renderWith('Symbiote/Addressable/AddressMap');
     }
 
     /**
@@ -182,7 +193,13 @@ class Addressable extends DataExtension
      */
     public function isAddressChanged($level = 1)
     {
-        $fields  = array('Address', 'Suburb', 'State', 'Postcode', 'Country');
+        $fields  = [
+            'Address',
+            'Suburb',
+            'State',
+            'Postcode',
+            'Country'
+        ];
         $changed = $this->owner->getChangedFields(false, $level);
 
         foreach ($fields as $field) {
@@ -204,19 +221,17 @@ class Addressable extends DataExtension
      *
      * @return array
      */
-    private function getAddressFields($_params = array())
+    private function getAddressFields($_params = [])
     {
         $params = array_merge(
-            array(
-                'includeHeader' => true,
-            ),
+            ['includeHeader' => true],
             (array) $_params
         );
 
-        $fields = array(
+        $fields = [
             TextField::create('Address', _t('Addressable.ADDRESS', 'Address')),
             TextField::create('Suburb', _t('Addressable.SUBURB', 'Suburb'))
-        );
+        ];
 
         if ($params['includeHeader']) {
             array_unshift(
@@ -270,7 +285,7 @@ class Addressable extends DataExtension
 
         // Get allowed states global. If there are no specific rules on a Page/DataObject
         // fallback to what is configured on this extension
-        $allowedStates = Config::inst()->get(__CLASS__, 'allowed_states');
+        $allowedStates = Config::inst()->get(self::class, 'allowed_states');
         if (is_array($allowedStates) &&
             $allowedStates) {
             return $allowedStates;
@@ -294,7 +309,7 @@ class Addressable extends DataExtension
 
         // Get allowed countries global. If there are no specific rules on a Page/DataObject
         // fallback to what is configured on this extension
-        $allowedCountries = Config::inst()->get(__CLASS__, 'allowed_countries');
+        $allowedCountries = Config::inst()->get(self::class, 'allowed_countries');
         if (is_array($allowedCountries) &&
             $allowedCountries) {
             return $allowedCountries;
@@ -317,7 +332,7 @@ class Addressable extends DataExtension
 
         // Get postcode  regex global. If there are no specific rules on a Page/DataObject
         // fallback to what is configured on this extension
-        $regex = Config::inst()->get(__CLASS__, 'postcode_regex');
+        $regex = Config::inst()->get(self::class, 'postcode_regex');
         if ($regex) {
             return $regex;
         }

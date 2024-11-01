@@ -8,8 +8,9 @@ use SilverStripe\ORM\DataObject;
 
 class GeocodableDataObjectTest extends DataObject
 {
-    private static $extensions = array(
-        Addressable::class, // Geocodable depends on `isAddressChanged` function from this extension
+    private static $extensions = [
+        Addressable::class,
+        // Geocodable depends on `isAddressChanged` function from this extension
         Geocodable::class,
-    );
+    ];
 }
